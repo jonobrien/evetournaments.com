@@ -2,30 +2,32 @@
 
 $(document).ready(function() {
 
-	var crestUrl = "https://crest-tq.eveonline.com/tournaments/14/series/";
-  $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/14/series/'>here</a>");
 
+  $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/1/series/'>here</a>");
 
-  $('#ajax').click(function() {
+});// doc.ready
+function getSeries() {
+    var url = "https://crest-tq.eveonline.com/tournaments/1/series/";
+    queryCrestSeries(url);
+}
+
+function queryCrestSeries(crestURL) {
     $.ajax({
       type: "GET",
-      url: crestUrl,
+      url: crestURL,
       success: function(data) {
         $('#series').empty();
-        parseTData(data);
+        parseSeriesData(data);
       }
     });
-  }); // ajax get series
-  
-
-}); // doc.ready
+  }
 
 
 /*
  * parse data from /tournaments/<id>/series into a table
  * heading: Bye | Winner | Red FC | Blue FC | Series Matches Won
 */
-function parseTData(data) {
+function parseSeriesData(data) {
   var lenItems = data['items'].length;
   var i = 0;
   var redT = '';
@@ -34,14 +36,14 @@ function parseTData(data) {
   while (i < lenItems) {
     // blueTeam has bye, no redTeam present, blue wins
     $('#series').append('<tr>');
-    if ('isBye' in data['items'][i]['redTeam'] 
+    if ('isBye' in data['items'][i]['redTeam']
     				&& data['items'][i]['redTeam']['isBye'] === true) {
       blueT = winner = data['items'][i]['winner']['team']['teamName'];
       redT = 'N/A - Bye'
       $('#series').append('<td class="ui info message"><i class="icon circle"></i></td>');
     }
     // redTeam has bye, no blueTeam present, red wins
-    else if ('isBye' in data['items'][i]['blueTeam'] 
+    else if ('isBye' in data['items'][i]['blueTeam']
     				&& data['items'][i]['blueTeam']['isBye'] === true) {
       redT = winner = data['items'][i]['winner']['team']['teamName'];
       blueT = 'N/A - Bye'
@@ -72,3 +74,21 @@ function parseTData(data) {
     $('#series').append('</tr>');
   } //$('#stuff').append(JSON.stringify(data,undefined,2));
 }
+
+
+
+function getSeriesTeam(crestURL) {
+    $.ajax({
+      type: "GET",
+      url: crestURL,
+      success: function(data) {
+        $('#series').empty();
+        parseTeamData(data);
+      }
+    });
+  }
+
+
+  function parseTeamData(data) {
+
+  }
