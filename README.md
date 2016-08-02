@@ -6,4 +6,4 @@ $ node server.js
 ```
 
 # endpoints
-- /tournaments/<id>/series/
+- /tournaments/`<id>`/series/
