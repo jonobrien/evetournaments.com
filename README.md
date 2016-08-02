@@ -1,2 +1,9 @@
 # eve_js
-parse the tournaments endpoint to start
+
+```bash
+$ npm install
+$ node server.js
+```
+
+# endpoints
+- /tournaments/<id>/series/
