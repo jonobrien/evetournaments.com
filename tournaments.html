@@ -21,6 +21,14 @@
 <body>
   <button class="ui button basic" onClick=getSeries()>ajax call</button>
 
+<div class="ui floating labeled icon dropdown button">
+  <i class="dropdown icon"></i>
+  <span class="text">Choose a Tournament</span>
+  <div id="tourns" class="right menu"></div>
+</div>
+
+
+
   <div>
     <table class="ui celled compact table collapsing">
       <thead>
@@ -35,6 +43,19 @@
       <tbody id="series"></tbody>
     </table>
   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <!-- semantic js needs to go here -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>

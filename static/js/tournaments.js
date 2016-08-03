@@ -5,15 +5,35 @@
 
 
 $(document).ready(function() {
-  populateTournaments();
-  $('ui,dropdown').dropdown();
-  $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/1/series/'>here</a>");
+    // init tournament information
+    // init dropdowns
+    $('.ui.dropdown').dropdown();
+    $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/1/series/'>here</a>");
+    var tRoot = "https://crest-tq.eveonline.com/tournaments/";
+    populateTournaments(tRoot);
 
 });// doc.ready
 
 
-function populateTournaments() {
-
+function populateTournaments(url) {
+    var urlStr = url;
+    var key = urlStr.replace("https://crest-tq.eveonline.com","");
+    // check if data is already cached
+    var cachedData = getCached(key);
+    // expired or not cached, get new data
+    if (cachedData === null) {
+        console.log("getting new tournament data");
+        cachedData = queryCrest(url);
+        cachedData.success(function(resp) {
+            console.log('success');
+            console.log(resp);
+            cache(resp, key);
+            parseTournaments(resp);
+        });
+    }
+    else {
+        parseTournaments(cachedData[key]);
+    }
 }
 
 
@@ -23,12 +43,18 @@ function populateTournaments() {
  * yes client-side caching is horribly insecure
  * but needed proof of concept first
 */
-function getSeries() {
+function getSeries(id) {
     $('#series').empty();
-    var url = "https://crest-tq.eveonline.com/tournaments/1/series/";
-    var additional = "/tournaments/1/series/";
+    var rt = "https://crest-tq.eveonline.com/tournaments/";
+    var series = "/series/"
+    if (id === undefined || id === null) {
+        id = "1";
+        console.log("improper tournament id");
+    }
+    var key = rt.replace("https://crest-tq.eveonline.com","") + id + series;
     // check if data is already cached
-    var cachedData = getCached(additional);
+    var cachedData = getCached(key);
+    var url = rt + id + series;
     // expired or not cached, get new data
     if (cachedData === null) {
         console.log("getting new data");
@@ -36,12 +62,38 @@ function getSeries() {
         cachedData.success(function(resp) {
             console.log('success');
             console.log(resp);
-            cache(resp, additional);
+            cache(resp, key);
             parseSeriesData(resp);
         });
     }
     else {
-        parseSeriesData(cachedData[additional]);
+        parseSeriesData(cachedData[key]);
+    }
+}
+
+
+/*
+ * parse data from /tournaments/<id>/series into a table
+ * heading: Bye | Winner | Red FC | Blue FC | Series Matches Won
+*/
+function parseTournaments(data) {
+    var lenItems = data['totalCount'];
+    var i = 0;
+    var name = '';
+    var func = ' onclick="getSeries("';
+    console.log(data.items);
+
+    while (i < lenItems) {
+        var item = '<div class="item" ';
+        name = data.items[i].href.name;
+        href = data.items[i].href.href + ') ';
+        href = href.replace("https://crest-tq.eveonline.com/tournaments", "");
+        //console.log(name);
+        //console.log(href);
+        item += func + href + '>' + name + '</div>';
+        console.log(item);
+        $('#tourns').append(item);
+    i++;
     }
 }
 
@@ -59,57 +111,57 @@ function parseSeriesData(data) {
     var blueT = '';
     var winner = '';
     while (i < lenItems) {
-    // blueTeam has bye, no redTeam present, blue wins
-    $('#series').append('<tr>');
-    if ('isBye' in data['items'][i]['redTeam']
-    				&& data['items'][i]['redTeam']['isBye'] === true) {
-        blueT = winner = data['items'][i]['winner']['team']['teamName'];
-        redT = 'N/A - Bye';
-        $('#series').append('<td class="ui info message"><i class="icon circle"></i></td>');
-    }
-    // redTeam has bye, no blueTeam present, red wins
-    else if ('isBye' in data['items'][i]['blueTeam']
-    				&& data['items'][i]['blueTeam']['isBye'] === true) {
-        redT = winner = data['items'][i]['winner']['team']['teamName'];
-        blueT = 'N/A - Bye';
-        $('#series').append('<td class="negative"><i class="icon circle"></i></td>');
-    }
-    // nobody wins by default, get both teams and winner
-    // actual match
-    else {
-        redT = data['items'][i]['redTeam']['team']['teamName'];
-        blueT = data['items'][i]['blueTeam']['team']['teamName'];
-        winner = data['items'][i]['winner']['team']['teamName'];
-        $('#series').append('<td ><i class="icon circle thin"></i></td>');
-    }
-    // color coordinate winner
-    if (winner === redT) {
-        $('#series').append('<td class="negative">'+winner+'</td>');
-    }
-    else {
-        $('#series').append('<td class="ui info message">'+winner+'</td>');
-    }
-    $('#series').append('<td class="negative">'+redT+'</td>');
-    $('#series').append('<td class="ui info message">'+blueT+'</td>');
+        // blueTeam has bye, no redTeam present, blue wins
+        $('#series').append('<tr>');
+        if ('isBye' in data['items'][i]['redTeam']
+        				&& data['items'][i]['redTeam']['isBye'] === true) {
+            blueT = winner = data['items'][i]['winner']['team']['teamName'];
+            redT = 'N/A - Bye';
+            $('#series').append('<td class="ui info message"><i class="icon circle"></i></td>');
+        }
+        // redTeam has bye, no blueTeam present, red wins
+        else if ('isBye' in data['items'][i]['blueTeam']
+        				&& data['items'][i]['blueTeam']['isBye'] === true) {
+            redT = winner = data['items'][i]['winner']['team']['teamName'];
+            blueT = 'N/A - Bye';
+            $('#series').append('<td class="negative"><i class="icon circle"></i></td>');
+        }
+        // nobody wins by default, get both teams and winner
+        // actual match
+        else {
+            redT = data['items'][i]['redTeam']['team']['teamName'];
+            blueT = data['items'][i]['blueTeam']['team']['teamName'];
+            winner = data['items'][i]['winner']['team']['teamName'];
+            $('#series').append('<td ><i class="icon circle thin"></i></td>');
+        }
+        // color coordinate winner
+        if (winner === redT) {
+            $('#series').append('<td class="negative">'+winner+'</td>');
+        }
+        else {
+            $('#series').append('<td class="ui info message">'+winner+'</td>');
+        }
+        $('#series').append('<td class="negative">'+redT+'</td>');
+        $('#series').append('<td class="ui info message">'+blueT+'</td>');
 
-    // add matches won, link to team info
-    // should be converted to dropdown table info instead
-    var rWon = data['items'][i]['matchesWon']['redTeam_str'];
-    var bWon = data['items'][i]['matchesWon']['blueTeam_str'];
-    var rLink = data['items'][i].redTeam.team.href;
-    var bLink = data['items'][i].blueTeam.team.href;
-    var red_blue_teams = "<a target='blank' href='"+rLink+"'><i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" + "<a target='blank' href='"+bLink+"'><i class='blue icon user'/></a> " + bWon;
-
-
-    $('#series').append(
-        '<td class="positive " id=match' + i + '>'
-        + red_blue_teams + '</td>'
-    );
+        // add matches won, link to team info
+        // should be converted to dropdown table info instead
+        var rWon = data['items'][i]['matchesWon']['redTeam_str'];
+        var bWon = data['items'][i]['matchesWon']['blueTeam_str'];
+        var rLink = data['items'][i].redTeam.team.href;
+        var bLink = data['items'][i].blueTeam.team.href;
+        var red_blue_teams = "<a target='blank' href='"+rLink+"'><i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" + "<a target='blank' href='"+bLink+"'><i class='blue icon user'/></a> " + bWon;
 
 
-    i++; // next match
-    $('#series').append('</tr>');
-  }
+        $('#series').append(
+            '<td class="positive " id=match' + i + '>'
+            + red_blue_teams + '</td>'
+        );
+
+
+        i++; // next match
+        $('#series').append('</tr>');
+    }
 }
 
 
@@ -180,4 +232,8 @@ function cache(data, queryStr, cacheOffset) {
     // stringify the object so getItem returns the object
     localStorage.setItem(queryStr, JSON.stringify(cacheMe));
     console.log("cached until: " + cacheMe.cached_until);
+}
+
+function escapeSlashes( s ) {
+    return (s + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
 }
