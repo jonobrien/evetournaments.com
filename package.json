@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/jonobrien/eve_js#readme",
   "dependencies": {
-    "express": "^4.14.0",
+    "express": "^4.14.0"
   }
 }
