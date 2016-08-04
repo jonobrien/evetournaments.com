@@ -43,18 +43,16 @@ function populateTournaments(url) {
  * yes client-side caching is horribly insecure
  * but needed proof of concept first
 */
-function getSeries(id) {
+function getSeries(url) {
     $('#series').empty();
-    var rt = "https://crest-tq.eveonline.com/tournaments/";
-    var series = "/series/"
-    if (id === undefined || id === null) {
-        id = "1";
-        console.log("improper tournament id");
+    if (url === undefined || url === null) {
+        console.log("improper series passed");
+        return -1;
     }
-    var key = rt.replace("https://crest-tq.eveonline.com","") + id + series;
+    url += 'series/'
+    var key = url.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
     var cachedData = getCached(key);
-    var url = rt + id + series;
     // expired or not cached, get new data
     if (cachedData === null) {
         console.log("getting new data");
@@ -80,18 +78,14 @@ function parseTournaments(data) {
     var lenItems = data['totalCount'];
     var i = 0;
     var name = '';
-    var func = ' onclick="getSeries("';
+    var func = ' onclick=getSeries("';
     console.log(data.items);
 
     while (i < lenItems) {
         var item = '<div class="item" ';
         name = data.items[i].href.name;
-        href = data.items[i].href.href + ') ';
-        href = href.replace("https://crest-tq.eveonline.com/tournaments", "");
-        //console.log(name);
-        //console.log(href);
+        href = data.items[i].href.href + '") ';
         item += func + href + '>' + name + '</div>';
-        console.log(item);
         $('#tourns').append(item);
     i++;
     }
@@ -131,8 +125,14 @@ function parseSeriesData(data) {
         else {
             redT = data['items'][i]['redTeam']['team']['teamName'];
             blueT = data['items'][i]['blueTeam']['team']['teamName'];
-            winner = data['items'][i]['winner']['team']['teamName'];
-            $('#series').append('<td ><i class="icon circle thin"></i></td>');
+            if (data['items'][i]['winner']['isDecided'] === true) {
+                winner = data['items'][i]['winner']['team']['teamName'];
+                $('#series').append('<td ><i class="icon circle thin"></i></td>');
+            }
+            else {
+                winner = 'undecided';
+                $('#series').append('<td ><i class="icon warning circle"></i></td>');
+            }
         }
         // color coordinate winner
         if (winner === redT) {
@@ -146,18 +146,33 @@ function parseSeriesData(data) {
 
         // add matches won, link to team info
         // should be converted to dropdown table info instead
-        var rWon = data['items'][i]['matchesWon']['redTeam_str'];
-        var bWon = data['items'][i]['matchesWon']['blueTeam_str'];
-        var rLink = data['items'][i].redTeam.team.href;
-        var bLink = data['items'][i].blueTeam.team.href;
+        // bye matches don't always have team urls/winners
+        // so don't link teams or show wins
+        var rWon = '';
+        var bWon = '';
+        var rLink = '';
+        var bLink = '';
+        if ('team' in data['items'][i].redTeam && 'href' in data['items'][i].redTeam.team) {
+            rWon = data['items'][i].matchesWon.redTeam_str;
+            rLink = data['items'][i].redTeam.team.href;
+
+        }
+        else {
+            rWon = '-';
+            rLink = '#';
+        }
+        if ('team' in data['items'][i].blueTeam && 'href' in data['items'][i].blueTeam.team) {
+            bWon = data['items'][i].matchesWon.blueTeam_str;
+            bLink = data['items'][i].blueTeam.team.href;
+        }
+        else {
+            bWon = '-';
+            bLink = '#';
+        }
         var red_blue_teams = "<a target='blank' href='"+rLink+"'><i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" + "<a target='blank' href='"+bLink+"'><i class='blue icon user'/></a> " + bWon;
-
-
         $('#series').append(
-            '<td class="positive " id=match' + i + '>'
-            + red_blue_teams + '</td>'
+                '<td class="positive " id=match' + i + '>'+ red_blue_teams + '</td>'
         );
-
 
         i++; // next match
         $('#series').append('</tr>');
