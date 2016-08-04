@@ -11,6 +11,7 @@
 */
 function getSeries(url) {
     $('#series').empty();
+    $('#ft').empty();
     if (url === undefined || url === null) {
         console.log("improper series passed");
         return -1;
@@ -21,7 +22,7 @@ function getSeries(url) {
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        console.log("getting new data");
+        console.log("getting new series");
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
             console.log('success');
@@ -33,6 +34,7 @@ function getSeries(url) {
     else {
         parseSeriesData(cachedData[key]);
     }
+    $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>")
 }
 
 
@@ -48,6 +50,7 @@ function parseSeriesData(data) {
     var redT = '';
     var blueT = '';
     var winner = '';
+    var isBye = false;
     while (i < lenItems) {
         // blueTeam has bye, no redTeam present, blue wins
         $('#series').append('<tr>');
@@ -55,14 +58,16 @@ function parseSeriesData(data) {
         				&& data['items'][i]['redTeam']['isBye'] === true) {
             blueT = winner = data['items'][i]['winner']['team']['teamName'];
             redT = 'N/A - Bye';
-            $('#series').append('<td class="ui info message"><i class="icon circle"></i></td>');
+            isBye = true;
+            $('#series').append('<td class="ui info message"><i class="icon circle thin"></i></td>');
         }
         // redTeam has bye, no blueTeam present, red wins
         else if ('isBye' in data['items'][i]['blueTeam']
         				&& data['items'][i]['blueTeam']['isBye'] === true) {
             redT = winner = data['items'][i]['winner']['team']['teamName'];
             blueT = 'N/A - Bye';
-            $('#series').append('<td class="negative"><i class="icon circle"></i></td>');
+            isBye = true;
+            $('#series').append('<td class="negative"><i class="icon circle thin"></i></td>');
         }
         // nobody wins by default, get both teams and winner
         // actual match
@@ -71,7 +76,16 @@ function parseSeriesData(data) {
             blueT = data['items'][i]['blueTeam']['team']['teamName'];
             if (data['items'][i]['winner']['isDecided'] === true) {
                 winner = data['items'][i]['winner']['team']['teamName'];
-                $('#series').append('<td ><i class="icon circle thin"></i></td>');
+                if (winner === redT) {
+                    $('#series').append('<td class="negative">'+
+                            '<i class="icon circle"></i></td>'
+                    );
+                }
+                else {
+                    $('#series').append('<td class="ui info message">'+
+                            '<i class="icon circle"></i></td>'
+                    );
+                }
             }
             else {
                 winner = 'undecided';
@@ -113,10 +127,25 @@ function parseSeriesData(data) {
             bWon = '-';
             bLink = '#';
         }
-        var red_blue_teams = "<a target='blank' href='"+rLink+"'><i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" + "<a target='blank' href='"+bLink+"'><i class='blue icon user'/></a> " + bWon;
-        $('#series').append(
-                '<td class="positive " id=match' + i + '>'+ red_blue_teams + '</td>'
-        );
+        // should dynamically link team info off this element
+        var red_blue_teams = "<a id=rWon" + i + "' target='blank' href='"+rLink+"'>"+
+                "<i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" +
+                "<a id=bWon" + i + "' target='blank' href='"+bLink+"'>"+
+                "<i class='blue icon user'/></a> " + bWon;
+        $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
+
+        // just make the icons, data should be cached here and thus only called
+        // a single time for each series, but still could hit rate-limit
+        // as 1 GET for series data, 1 for matches, 1 for team x lots = >150/sec
+        // append the last <td> 6 match circles here </td>
+        // bye series have no matches
+        if (isBye) {
+            $('#series').append('<td id=wins' + i + '> - bye - </td>');
+        }
+        else {
+            $('#series').append('<td><div id="subSeries' + i + '"><div></td>');
+            populateMatches(data.items[i].matches.href);
+        }
 
         i++; // next match
         $('#series').append('</tr>');

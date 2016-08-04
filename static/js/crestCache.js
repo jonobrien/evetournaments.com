@@ -1,18 +1,24 @@
 /*
  * Proof of concept CREST API queried and cached in browser
 */
-
-
+var max = 150;
+var rateLimit = 0; // max 150
 /*
  * not cached or expired cache, get data
 */
 function queryCrest(crestURL) {
-    console.log('querying for new data at: \n');
-    console.log(crestURL);
-    return $.ajax({
-      type: "GET",
-      url: crestURL,
-    });
+    rateLimit +=1;
+    if (rateLimit < max) {
+        //console.log(rateLimit + ' new data: '+ crestURL);
+        return $.ajax({
+            type: "GET",
+            url: crestURL
+        });
+    }
+    else {
+        console.log('hit rateLimit, wait 1');
+        rateLimit = 0;
+    }
 }
 
 
@@ -30,16 +36,18 @@ function getCached(queryStr) {
             // if data hasn't expired yet return it
             var now = new Date().getTime();
             if (now < data.cached_until) {
-                console.log('valid cached until: ' + new Date(data.cached_until));
-                console.log(data);
+                //console.log('valid cached until: ' + new Date(data.cached_until));
+                //console.log(data);
                 return data;
             }
             // otherwise don't return it
             else {
+                /*
                 console.log('cached data expired, return null');
                 console.log('cache_expires: ' + data.cached_until);
                 console.log('          now: ' + now);
                 console.log('         diff: ' + (now-data.cached_until));
+                */
                 data = null;
             }
         }
