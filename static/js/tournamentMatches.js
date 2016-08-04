@@ -1,37 +1,35 @@
 /*
- * Proof of concept CREST parsing for tournaments endpoint
+ * Proof of concept CREST parsing for tournament matches
 */
 
 
-$(document).ready(function() {
-    // init tournament information
-    // init dropdowns
-    $('.ui.dropdown').dropdown();
-    $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/1/series/'>here</a>");
-    var tRoot = "https://crest-tq.eveonline.com/tournaments/";
-    populateTournaments(tRoot);
 
-});// doc.ready
-
-
-function populateTournaments(url) {
-    var urlStr = url;
-    var key = urlStr.replace("https://crest-tq.eveonline.com","");
+/*
+ * get all matches of a series
+*/
+function getMatches(url) {
+    $('#series').empty();
+    if (url === undefined || url === null) {
+        console.log("improper series passed");
+        return -1;
+    }
+    url += 'series/'
+    var key = url.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        console.log("getting new tournament data");
+        console.log("getting new data");
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
             console.log('success');
             console.log(resp);
             cache(resp, key);
-            parseTournaments(resp);
+            parseMatches(resp);
         });
     }
     else {
-        parseTournaments(cachedData[key]);
+        parseMatches(cachedData[key]);
     }
 }
 
@@ -41,7 +39,7 @@ function populateTournaments(url) {
  * heading:
  * matchStatus(regular,bye,undecided) | Winner | Red FC | Blue FC | Series Wins
 */
-function parseTournaments(data) {
+function parseMatches(data) {
     var lenItems = data['totalCount'];
     var i = 0;
     var name = '';
