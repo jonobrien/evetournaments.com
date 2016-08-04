@@ -19,30 +19,36 @@
 
 
 <body>
-  <button class="ui button basic" onClick=getSeries()>ajax call</button>
+    <!-- should css this -->
+    <div class="ui button disabled simple">
+        <i class= "help circle icon"></i>status:&nbsp;&nbsp;
+        completed&nbsp;&nbsp;<i class="icon circle thin"></i>
+        bye&nbsp;&nbsp;<i class="icon circle"></i>
+        undecided&nbsp;&nbsp;<i class="icon warning circle"></i>
+    </div>
 
-<div class="ui floating labeled icon dropdown button">
-  <i class="dropdown icon"></i>
-  <span class="text">Choose a Tournament</span>
-  <div id="tourns" class="right menu"></div>
-</div>
+    <div class="ui floating labeled icon dropdown button">
+        <i class="dropdown icon"></i>
+        <span class="text">Choose a Tournament</span>
+        <div id="tourns" class="right menu"></div>
+    </div>
 
 
-
-  <div>
-    <table class="ui celled compact table collapsing">
-      <thead>
-        <tr>
-          <th>Bye</th>
-          <th>Winner</th>
-          <th>Red FC</th>
-          <th>Blue FC</th>
-          <th>Series Wins</th>
-        </tr>
-      </thead>
-      <tbody id="series"></tbody>
-    </table>
-  </div>
+    <div>
+        <table class="ui celled compact table collapsing">
+            <thead>
+                <tr>
+                    <th><i class= "help circle icon"></i></th>
+                    <th>Winner</th>
+                    <!-- some tournamets these are FC names, some alliance names...-->
+                    <th>Red</th>
+                    <th>Blue</th>
+                    <th>Series Wins</th>
+                </tr>
+            </thead>
+          <tbody id="series"></tbody>
+        </table>
+    </div>
 
 
 

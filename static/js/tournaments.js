@@ -72,7 +72,8 @@ function getSeries(url) {
 
 /*
  * parse data from /tournaments/<id>/series into a table
- * heading: Bye | Winner | Red FC | Blue FC | Series Matches Won
+ * heading:
+ * matchStatus(regular,bye,undecided) | Winner | Red FC | Blue FC | Series Wins
 */
 function parseTournaments(data) {
     var lenItems = data['totalCount'];
@@ -97,6 +98,8 @@ function parseTournaments(data) {
 /*
  * parse data from /tournaments/<id>/series into a table
  * heading: Bye | Winner | Red FC | Blue FC | Series Matches Won
+ * matchesWon contains a dropdown to further parse into the tournament
+ *
 */
 function parseSeriesData(data) {
     var lenItems = data['totalCount'];
