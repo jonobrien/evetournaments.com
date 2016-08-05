@@ -9,9 +9,13 @@
  * <div> MATCH 1 | 2 ... 5 | RESULTS </div>
  * dynamic as future series could have > 5 matches
 */
-function populateMatches(url) {
+function populateMatches(seriesUrl, url) {
     if (url === undefined || url === null) {
         console.log("improper match passed");
+        return -1;
+    }
+    if (seriesUrl === undefined || seriesUrl === null) {
+        console.log("improper seriesUrl passed");
         return -1;
     }
     var key = url.replace("https://crest-tq.eveonline.com","");
@@ -19,17 +23,14 @@ function populateMatches(url) {
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        console.log("getting new matches");
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
-            console.log('success');
-            console.log(resp);
             cache(resp, key);
-            parseMatches(resp);
+            parseMatches(seriesUrl, resp);
         });
     }
     else {
-        parseMatches(cachedData[key]);
+        parseMatches(seriesUrl, cachedData[key]);
     }
 }
 
@@ -39,21 +40,24 @@ function populateMatches(url) {
  * heading:
  * matchStatus(regular,bye,undecided) | Winner | Red FC | Blue FC | Series Wins
 */
-function parseMatches(data) {
+function parseMatches(url, data) {
     var lenItems = data.totalCount;
-    console.log(data);
     var i = 0;
-    var name = '';
     var redTeam = '';
     var blueTeam = '';
     var winner = '';
     var winName = '';
     var matches = '';
-    var s = data.items[0].series.href.split('/');
+    var match = '';
+    //var s = data.items[0].series.href.split('/');
+    var s = url.split('/');
     var series = '#subSeries' + s[s.length -2];
-    console.log(series);
+    // handle bye series with no matches
+    if (lenItems === 0) {
+        $(series).append('<i class="icon circle thin"></i>');
+        return;
+    }
     while (i < lenItems) {
-        var match = '';
         winner = data.items[i].winner.href;
         redTeam = data.items[i].redTeam.href;
         blueTeam = data.items[i].blueTeam.href;

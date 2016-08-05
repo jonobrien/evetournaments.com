@@ -21,11 +21,8 @@ function populateTournaments(url) {
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        console.log("getting new tournament data");
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
-            console.log('success');
-            console.log(resp);
             cache(resp, key);
             parseTournaments(resp);
         });
@@ -46,8 +43,6 @@ function parseTournaments(data) {
     var i = 0;
     var name = '';
     var func = ' onclick=getSeries("';
-    console.log(data.items);
-
     while (i < lenItems) {
         var item = '<div class="item" ';
         name = data.items[i].href.name;

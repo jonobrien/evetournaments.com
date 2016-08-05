@@ -22,11 +22,8 @@ function getSeries(url) {
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        console.log("getting new series");
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
-            console.log('success');
-            console.log(resp);
             cache(resp, key);
             parseSeriesData(resp);
         });
@@ -50,7 +47,6 @@ function parseSeriesData(data) {
     var redT = '';
     var blueT = '';
     var winner = '';
-    var isBye = false;
     while (i < lenItems) {
         // blueTeam has bye, no redTeam present, blue wins
         $('#series').append('<tr>');
@@ -58,7 +54,6 @@ function parseSeriesData(data) {
         				&& data['items'][i]['redTeam']['isBye'] === true) {
             blueT = winner = data['items'][i]['winner']['team']['teamName'];
             redT = 'N/A - Bye';
-            isBye = true;
             $('#series').append('<td class="ui info message"><i class="icon circle thin"></i></td>');
         }
         // redTeam has bye, no blueTeam present, red wins
@@ -66,7 +61,6 @@ function parseSeriesData(data) {
         				&& data['items'][i]['blueTeam']['isBye'] === true) {
             redT = winner = data['items'][i]['winner']['team']['teamName'];
             blueT = 'N/A - Bye';
-            isBye = true;
             $('#series').append('<td class="negative"><i class="icon circle thin"></i></td>');
         }
         // nobody wins by default, get both teams and winner
@@ -106,25 +100,20 @@ function parseSeriesData(data) {
         // should be converted to dropdown table info instead
         // bye matches don't always have team urls/winners
         // so don't link teams or show wins
-        var rWon = '';
-        var bWon = '';
+        var rWon = data['items'][i].matchesWon.redTeam_str;
+        var bWon = data['items'][i].matchesWon.blueTeam_str;
         var rLink = '';
         var bLink = '';
         if ('team' in data['items'][i].redTeam && 'href' in data['items'][i].redTeam.team) {
-            rWon = data['items'][i].matchesWon.redTeam_str;
             rLink = data['items'][i].redTeam.team.href;
-
         }
         else {
-            rWon = '-';
             rLink = '#';
         }
         if ('team' in data['items'][i].blueTeam && 'href' in data['items'][i].blueTeam.team) {
-            bWon = data['items'][i].matchesWon.blueTeam_str;
             bLink = data['items'][i].blueTeam.team.href;
         }
         else {
-            bWon = '-';
             bLink = '#';
         }
         // should dynamically link team info off this element
@@ -139,13 +128,9 @@ function parseSeriesData(data) {
         // as 1 GET for series data, 1 for matches, 1 for team x lots = >150/sec
         // append the last <td> 6 match circles here </td>
         // bye series have no matches
-        if (isBye) {
-            $('#series').append('<td id=wins' + i + '> - bye - </td>');
-        }
-        else {
-            $('#series').append('<td><div id="subSeries' + i + '"><div></td>');
-            populateMatches(data.items[i].matches.href);
-        }
+        $('#series').append('<td><div id="subSeries' + i + '"><div></td>');
+        seriesUrl = data.items[i].self.href;
+        populateMatches(seriesUrl, data.items[i].matches.href);
 
         i++; // next match
         $('#series').append('</tr>');

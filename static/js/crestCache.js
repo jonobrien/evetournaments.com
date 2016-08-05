@@ -77,5 +77,5 @@ function cache(data, queryStr, cacheOffset) {
     cacheMe['cached_until'] = cacheDuration;
     // stringify the object so getItem returns the object
     localStorage.setItem(queryStr, JSON.stringify(cacheMe));
-    console.log("cached until: " + cacheMe.cached_until);
+    //console.log("cached until: " + cacheMe.cached_until);
 }
