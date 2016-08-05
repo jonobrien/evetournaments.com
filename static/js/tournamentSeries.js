@@ -48,20 +48,21 @@ function parseSeriesData(data) {
     var blueT = '';
     var winner = '';
     while (i < lenItems) {
+        // FIRST COLUMN STATUS
         // blueTeam has bye, no redTeam present, blue wins
         $('#series').append('<tr>');
         if ('isBye' in data['items'][i]['redTeam']
         				&& data['items'][i]['redTeam']['isBye'] === true) {
             blueT = winner = data['items'][i]['winner']['team']['teamName'];
             redT = 'N/A - Bye';
-            $('#series').append('<td class="ui info message"><i class="icon circle thin"></i></td>');
+            $('#series').append('<td id="seriesTable' + i + '" class="ui info message"><i class="icon circle thin"></i></td>');
         }
         // redTeam has bye, no blueTeam present, red wins
         else if ('isBye' in data['items'][i]['blueTeam']
         				&& data['items'][i]['blueTeam']['isBye'] === true) {
             redT = winner = data['items'][i]['winner']['team']['teamName'];
             blueT = 'N/A - Bye';
-            $('#series').append('<td class="negative"><i class="icon circle thin"></i></td>');
+            $('#series').append('<td id="seriesTable'+ i + '" class="negative"><i class="icon circle thin"></i></td>');
         }
         // nobody wins by default, get both teams and winner
         // actual match
@@ -71,21 +72,24 @@ function parseSeriesData(data) {
             if (data['items'][i]['winner']['isDecided'] === true) {
                 winner = data['items'][i]['winner']['team']['teamName'];
                 if (winner === redT) {
-                    $('#series').append('<td class="negative">'+
+                    $('#series').append('<td id="seriesTable'+ i + '"  class="negative">'+
                             '<i class="icon circle"></i></td>'
                     );
                 }
                 else {
-                    $('#series').append('<td class="ui info message">'+
+                    $('#series').append('<td id="seriesTable'+ i + '"  class="ui info message">'+
                             '<i class="icon circle"></i></td>'
                     );
                 }
             }
             else {
                 winner = 'undecided';
-                $('#series').append('<td ><i class="icon warning circle"></i></td>');
+                $('#series').append('<td id="seriesTable'+ i + '"  ><i class="icon warning circle"></i></td>');
             }
         }
+
+
+        // WINNER column
         // color coordinate winner
         if (winner === redT) {
             $('#series').append('<td class="negative">'+winner+'</td>');
@@ -96,6 +100,8 @@ function parseSeriesData(data) {
         $('#series').append('<td class="negative">'+redT+'</td>');
         $('#series').append('<td class="ui info message">'+blueT+'</td>');
 
+
+        // SERIES WINS
         // add matches won, link to team info
         // should be converted to dropdown table info instead
         // bye matches don't always have team urls/winners
@@ -123,6 +129,8 @@ function parseSeriesData(data) {
                 "<i class='blue icon user'/></a> " + bWon;
         $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
 
+
+        // MATCHES column
         // just make the icons, data should be cached here and thus only called
         // a single time for each series, but still could hit rate-limit
         // as 1 GET for series data, 1 for matches, 1 for team x lots = >150/sec
