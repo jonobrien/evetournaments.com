@@ -16,6 +16,8 @@ function getSeries(url) {
         console.log("improper series passed");
         return -1;
     }
+    // hard code url here to avoid querying an extra time
+    // also hardcode it as some data is not correct currently
     url += 'series/'
     var key = url.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
@@ -47,22 +49,30 @@ function parseSeriesData(data) {
     var redT = '';
     var blueT = '';
     var winner = '';
+    matchDrop = '';
     while (i < lenItems) {
         // FIRST COLUMN STATUS
+        // attach dropdown to later attach table of matches, etc
         // blueTeam has bye, no redTeam present, blue wins
-        $('#series').append('<tr>');
+
         if ('isBye' in data['items'][i]['redTeam']
-        				&& data['items'][i]['redTeam']['isBye'] === true) {
+                        && data['items'][i]['redTeam']['isBye'] === true) {
             blueT = winner = data['items'][i]['winner']['team']['teamName'];
             redT = 'N/A - Bye';
-            $('#series').append('<td id="seriesTable' + i + '" class="ui info message"><i class="icon circle thin"></i></td>');
+            matchDrop = ''+
+            '<td class="ui info message">'+
+                '<div id="seriesTable' + i + '" class="ui dropdown">'+
+                    '<i class="icon circle thin"></i>';
         }
         // redTeam has bye, no blueTeam present, red wins
         else if ('isBye' in data['items'][i]['blueTeam']
-        				&& data['items'][i]['blueTeam']['isBye'] === true) {
+                            && data['items'][i]['blueTeam']['isBye'] === true) {
             redT = winner = data['items'][i]['winner']['team']['teamName'];
             blueT = 'N/A - Bye';
-            $('#series').append('<td id="seriesTable'+ i + '" class="negative"><i class="icon circle thin"></i></td>');
+            matchDrop = ''+
+                '<td class="negative">'+
+                    '<div id="seriesTable'+ i + '" class="ui dropdown">'+
+                        '<i class="icon circle thin"></i>';
         }
         // nobody wins by default, get both teams and winner
         // actual match
@@ -72,21 +82,35 @@ function parseSeriesData(data) {
             if (data['items'][i]['winner']['isDecided'] === true) {
                 winner = data['items'][i]['winner']['team']['teamName'];
                 if (winner === redT) {
-                    $('#series').append('<td id="seriesTable'+ i + '"  class="negative">'+
-                            '<i class="icon circle"></i></td>'
-                    );
+            matchDrop = ''+
+                        '<td class="negative">'+
+                            '<div id="seriesTable'+ i + '" class="ui dropdown">'+
+                                '<i class="icon circle"></i>';
                 }
                 else {
-                    $('#series').append('<td id="seriesTable'+ i + '"  class="ui info message">'+
-                            '<i class="icon circle"></i></td>'
-                    );
+                    matchDrop = ''+
+                        '<td class="ui info message">'+
+                            '<div id="seriesTable'+ i + '" class="ui dropdown">'+
+                                '<i class="icon circle"></i>';
                 }
             }
             else {
                 winner = 'undecided';
-                $('#series').append('<td id="seriesTable'+ i + '"  ><i class="icon warning circle"></i></td>');
+                matchDrop = ''+
+                    '<td>'+
+                        '<div id="seriesTable'+ i + '"  class="ui dropdown">'+
+                            '<i class="icon warning circle"></i>';
             }
         }
+        $('#series').append('<tr>');
+        $('#series').append(matchDrop);
+        $('#seriesTable' + i).append(
+        '<div class="menu">'+
+            '<div class="item">twaawtwa</item>'+
+        '</div>'+
+        '</div> <!--dropdown-->'+
+        '</td>'
+        );
 
 
         // WINNER column
