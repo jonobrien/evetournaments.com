@@ -61,8 +61,10 @@ function parseSeriesData(data) {
             redT = 'N/A - Bye';
             matchDrop = ''+
             '<td class="ui info message">'+
-                '<div id="seriesTable' + i + '" class="ui dropdown">'+
-                    '<i class="icon circle thin"></i>';
+                '<div class="ui dropdown">'+
+                    '<i class="icon circle thin"></i>'+
+                    '<div class="menu" id="matchMenu'+i+'"></div>'+
+                '</div></td>';
         }
         // redTeam has bye, no blueTeam present, red wins
         else if ('isBye' in data['items'][i]['blueTeam']
@@ -71,8 +73,10 @@ function parseSeriesData(data) {
             blueT = 'N/A - Bye';
             matchDrop = ''+
                 '<td class="negative">'+
-                    '<div id="seriesTable'+ i + '" class="ui dropdown">'+
-                        '<i class="icon circle thin"></i>';
+                    '<div class="ui dropdown">'+
+                        '<i class="icon circle thin"></i>'+
+                    '<div class="menu" id="matchMenu'+i+'"></div>'+
+                '</div></td>';
         }
         // nobody wins by default, get both teams and winner
         // actual match
@@ -82,37 +86,35 @@ function parseSeriesData(data) {
             if (data['items'][i]['winner']['isDecided'] === true) {
                 winner = data['items'][i]['winner']['team']['teamName'];
                 if (winner === redT) {
-            matchDrop = ''+
+                    matchDrop = ''+ // redTeam winner
                         '<td class="negative">'+
-                            '<div id="seriesTable'+ i + '" class="ui dropdown">'+
-                                '<i class="icon circle"></i>';
+                            '<div class="ui dropdown">'+
+                                '<i class="icon circle"></i>'+
+                                '<div class="menu" id="matchMenu'+i+'"></div>'+
+                            '</div></td>';
                 }
                 else {
-                    matchDrop = ''+
+                    matchDrop = ''+ // blueTeam winner
                         '<td class="ui info message">'+
-                            '<div id="seriesTable'+ i + '" class="ui dropdown">'+
-                                '<i class="icon circle"></i>';
+                            '<div class="ui dropdown">'+
+                                '<i class="icon circle"></i>'+
+                                '<div class="menu" id="matchMenu'+i+'"></div>'+
+                            '</div></td>';
                 }
             }
             else {
                 winner = 'undecided';
-                matchDrop = ''+
-                    '<td>'+
-                        '<div id="seriesTable'+ i + '"  class="ui dropdown">'+
-                            '<i class="icon warning circle"></i>';
+                matchDrop = '<td>'+ // no series winner
+                        '<div class="ui dropdown">'+
+                            '<i class="icon warning circle"></i>'+
+                            '<div class="menu" id="matchMenu1"></div>'+
+                        '</div></td>';
             }
         }
+
         $('#series').append('<tr>');
         $('#series').append(matchDrop);
-        $('#seriesTable' + i).append(
-        '<div class="menu">'+
-            '<div class="item">twaawtwa</item>'+
-        '</div>'+
-        '</div> <!--dropdown-->'+
-        '</td>'
-        );
-
-
+        $('#matchMenu1').append('<div class="item">dynamic</div>');
         // WINNER column
         // color coordinate winner
         if (winner === redT) {
@@ -123,7 +125,6 @@ function parseSeriesData(data) {
         }
         $('#series').append('<td class="negative">'+redT+'</td>');
         $('#series').append('<td class="ui info message">'+blueT+'</td>');
-
 
         // SERIES WINS
         // add matches won, link to team info
@@ -152,6 +153,7 @@ function parseSeriesData(data) {
                 "<a id=bWon" + i + "' target='blank' href='"+bLink+"'>"+
                 "<i class='blue icon user'/></a> " + bWon;
         $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
+        $('#matchMenu'+i).append('<div class=" disabled item">dynamic</div>');
 
 
         // MATCHES column
