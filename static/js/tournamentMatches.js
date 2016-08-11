@@ -49,12 +49,16 @@ function parseMatches(url, data) {
     var winName = '';
     var matches = '';
     var match = '';
+    var itemStart = '<div class="item">';
+    var itemEnd = '</div>';
     //var s = data.items[0].series.href.split('/');
     var s = url.split('/');
-    var series = '#subSeries' + s[s.length -2];
+    var currInt = s[s.length -2];
+    var matchMenu = '#matchMenu' + currInt;
+    var matchTD = '#matchTD' + currInt;
     // handle bye series with no matches
     if (lenItems === 0) {
-        $(series).append('<i class="icon circle thin"></i>');
+        $(matchMenu).append(itemStart + '<i class="icon circle thin"></i>' + itemEnd);
         return;
     }
     while (i < lenItems) {
@@ -67,13 +71,14 @@ function parseMatches(url, data) {
         }
         else {
             winName = data.items[i].blueTeam.name;
-            match = '<i class="blue icon circle" ></i>';
+            match = '<i class="blue icon circle"></i>';
         }
-        //name = data.items[i].href.name;
-        //href = data.items[i].href.href + '") ';
-        //item += func + href + '>' + name + '</td>';
+
         matches += match;
-    i++;
+        i++;
     }
-    $(series).append(matches);
+    // attach to the Matches TD in the series table
+    $(matchTD).append(matches);
+    // attach to the dropdown in the '?' type column
+    $(matchMenu).append(itemStart+matches+itemEnd);
 }

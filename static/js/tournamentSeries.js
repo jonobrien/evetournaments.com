@@ -107,14 +107,13 @@ function parseSeriesData(data) {
                 matchDrop = '<td>'+ // no series winner
                         '<div class="ui dropdown">'+
                             '<i class="icon warning circle"></i>'+
-                            '<div class="menu" id="matchMenu1"></div>'+
+                            '<div class="menu" id="matchMenu'+i+'"></div>'+
                         '</div></td>';
             }
         }
 
         $('#series').append('<tr>');
         $('#series').append(matchDrop);
-        $('#matchMenu1').append('<div class="item">dynamic</div>');
         // WINNER column
         // color coordinate winner
         if (winner === redT) {
@@ -123,7 +122,9 @@ function parseSeriesData(data) {
         else {
             $('#series').append('<td class="ui info message">'+winner+'</td>');
         }
+        // RED COLUMN
         $('#series').append('<td class="negative">'+redT+'</td>');
+        // BLUE COLUMN
         $('#series').append('<td class="ui info message">'+blueT+'</td>');
 
         // SERIES WINS
@@ -153,7 +154,6 @@ function parseSeriesData(data) {
                 "<a id=bWon" + i + "' target='blank' href='"+bLink+"'>"+
                 "<i class='blue icon user'/></a> " + bWon;
         $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
-        $('#matchMenu'+i).append('<div class=" disabled item">dynamic</div>');
 
 
         // MATCHES column
@@ -162,11 +162,12 @@ function parseSeriesData(data) {
         // as 1 GET for series data, 1 for matches, 1 for team x lots = >150/sec
         // append the last <td> 6 match circles here </td>
         // bye series have no matches
-        $('#series').append('<td><div id="subSeries' + i + '"><div></td>');
+        $('#series').append('<td><div id="matchTD' + i + '"><div></td>');
         seriesUrl = data.items[i].self.href;
         populateMatches(seriesUrl, data.items[i].matches.href);
 
         i++; // next match
         $('#series').append('</tr>');
+        $('.ui.dropdown').dropdown();
     }
 }
