@@ -5,25 +5,24 @@
 
 /*
  * list out each match with an icon and who won it
- * lists and extra icon for who won series, lists all results at once
- * <div> MATCH 1 | 2 ... 5 | RESULTS </div>
- * dynamic as future series could have > 5 matches
+ * pass in the series url as that has the id associated with the table row
+ * query by match url to retrieve matches per series
 */
-function populateMatches(seriesUrl, url) {
-    if (url === undefined || url === null) {
-        console.log("improper match passed");
+function populateMatches(seriesUrl, matchUrl) {
+    if (matchUrl === undefined || matchUrl === null) {
+        console.log("cannot populate matches, no match url passed");
         return -1;
     }
     if (seriesUrl === undefined || seriesUrl === null) {
-        console.log("improper seriesUrl passed");
+        console.log("cannot populate matches, no series url passed");
         return -1;
     }
-    var key = url.replace("https://crest-tq.eveonline.com","");
+    var key = matchUrl.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
     var cachedData = getCached(key);
     // expired or not cached, get new data
     if (cachedData === null) {
-        cachedData = queryCrest(url);
+        cachedData = queryCrest(matchUrl);
         cachedData.success(function(resp) {
             cache(resp, key);
             parseMatches(seriesUrl, resp);
@@ -36,11 +35,18 @@ function populateMatches(seriesUrl, url) {
 
 
 /*
- * parse data from /tournaments/<id>/series into a table
- * heading:
- * matchStatus(regular,bye,undecided) | Winner | Red FC | Blue FC | Series Wins
+ * parse data from /tournaments/<idX>/series/<idY>/matches/ into dropdown in first '?' column
+ * pass in the series url as that has the id associated with the table row
 */
 function parseMatches(url, data) {
+    if (url === undefined || url === null) {
+        console.log("cannot parse matches, no url passed");
+        return -1;
+    }
+    if (data === undefined || data === null) {
+        console.log("cannot parse and append matches, no data passed");
+        return -1;
+    }
     var lenItems = data.totalCount;
     var i = 0;
     var redTeam = '';
@@ -51,11 +57,9 @@ function parseMatches(url, data) {
     var match = '';
     var itemStart = '<div class="item">';
     var itemEnd = '</div>';
-    //var s = data.items[0].series.href.split('/');
     var s = url.split('/');
     var currInt = s[s.length -2];
     var matchMenu = '#matchMenu' + currInt;
-    var matchTD = '#matchTD' + currInt;
     // handle bye series with no matches
     if (lenItems === 0) {
         $(matchMenu).append(itemStart + '<i class="icon circle thin"></i>' + itemEnd);
@@ -77,8 +81,7 @@ function parseMatches(url, data) {
         matches += match;
         i++;
     }
-    // attach to the Matches TD in the series table
-    $(matchTD).append(matches);
+    var final = itemStart + matches + itemEnd;
     // attach to the dropdown in the '?' type column
-    $(matchMenu).append(itemStart+matches+itemEnd);
+    $(matchMenu).append(final);
 }

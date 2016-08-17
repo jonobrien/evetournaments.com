@@ -4,17 +4,25 @@
 
 
 $(document).ready(function() {
-    // init tournament information
-    // init dropdowns
+    // init tournament information and dropdown to begin parsing
+    $('.ui.dropdown').dropdown();
     $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/'>here</a>");
+    // hardcode url to avoid querying twice
     var tRoot = "https://crest-tq.eveonline.com/tournaments/";
     populateTournaments(tRoot);
-    $('.ui.dropdown').dropdown();
 
 });// doc.ready
 
 
+/*
+ * query /tournaments/ for list of tournaments
+ * cache and call parse of results
+*/
 function populateTournaments(url) {
+    if (url === undefined || url === null) {
+        console.log("cannot populate tournament urls, none passed");
+        return -1;
+    }
     var urlStr = url;
     var key = urlStr.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
@@ -34,12 +42,15 @@ function populateTournaments(url) {
 
 
 /*
- * parse data from /tournaments/<id>/series into a table
- * heading:
- * matchStatus(regular,bye,undecided) | Winner | Red FC | Blue FC | Series Wins
+ * parse data from /tournaments/ into a dropdown
+ * each item is a different tournament
 */
 function parseTournaments(data) {
-    var lenItems = data['totalCount'];
+    if (data === undefined || data === null) {
+        console.log("cannot parse tournament data, none passed");
+        return -1;
+    }
+    var lenItems = data.totalCount;
     var i = 0;
     var name = '';
     var func = ' onclick=getSeries("';

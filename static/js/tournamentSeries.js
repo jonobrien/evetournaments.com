@@ -4,7 +4,9 @@
 
 
 /*
- * assuming we pass the url to the new page
+ * called by item on tournament dropdown
+ * TODO -- passed to new page from server
+ *
  * we can render the data after a caching attempt
  * yes client-side caching is horribly insecure
  * but needed proof of concept first
@@ -13,16 +15,17 @@ function getSeries(url) {
     $('#series').empty();
     $('#ft').empty();
     if (url === undefined || url === null) {
-        console.log("improper series passed");
+        console.log("cannot get series, no  url passed");
         return -1;
     }
     // hard code url here to avoid querying an extra time
-    // also hardcode it as some data is not correct currently
-    url += 'series/'
+    // also hardcode it as some data is not correct currently on the endpoint
+    // due to AT changes
+    url += 'series/';
     var key = url.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
     var cachedData = getCached(key);
-    // expired or not cached, get new data
+    // expired or not cached, get new data, cache, parse
     if (cachedData === null) {
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
@@ -33,32 +36,40 @@ function getSeries(url) {
     else {
         parseSeriesData(cachedData[key]);
     }
-    $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>")
+    // update footer with series we query from
+    $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
 }
 
 
 /*
- * parse data from /tournaments/<id>/series into a table
- * heading: Bye | Winner | Red FC | Blue FC | Series Matches Won
- * matchesWon contains a dropdown to further parse into the tournament
+ * parse data from /tournaments/<id>/series/ into a table
+ * heading: ? | Winner | Red | Blue | Series Wins
+ * first column is dropdown with match information and colored by winner
+ * Series Win column appears to be number of match wins as that color team in the overall tournament (needs documentation to confirm)
  *
 */
 function parseSeriesData(data) {
-    var lenItems = data['totalCount'];
+    if (data === undefined || data === null) {
+        console.log("cannot parse series data, none passed");
+        return -1;
+    }
+    var lenItems = data.totalCount;
     var i = 0;
     var redT = '';
     var blueT = '';
     var winner = '';
-    matchDrop = '';
+    var matchDrop = '';
+    var bye = '- - bye - -';
     while (i < lenItems) {
-        // FIRST COLUMN STATUS
+        // ? COLUMN
         // attach dropdown to later attach table of matches, etc
-        // blueTeam has bye, no redTeam present, blue wins
 
-        if ('isBye' in data['items'][i]['redTeam']
-                        && data['items'][i]['redTeam']['isBye'] === true) {
-            blueT = winner = data['items'][i]['winner']['team']['teamName'];
-            redT = 'N/A - Bye';
+        // blueTeam has bye, no redTeam present, blue wins
+        $('#series').append('<tr>');
+        if ('isBye' in data.items[i].redTeam
+                        && data.items[i].redTeam.isBye === true) {
+            blueT = winner = data.items[i].winner.team.teamName;
+            redT = bye;
             matchDrop = ''+
             '<td class="ui info message">'+
                 '<div class="ui dropdown">'+
@@ -67,10 +78,10 @@ function parseSeriesData(data) {
                 '</div></td>';
         }
         // redTeam has bye, no blueTeam present, red wins
-        else if ('isBye' in data['items'][i]['blueTeam']
-                            && data['items'][i]['blueTeam']['isBye'] === true) {
-            redT = winner = data['items'][i]['winner']['team']['teamName'];
-            blueT = 'N/A - Bye';
+        else if ('isBye' in data.items[i].blueTeam
+                            && data.items[i].blueTeam.isBye === true) {
+            redT = winner = data.items[i].winner.team.teamName;
+            blueT = bye;
             matchDrop = ''+
                 '<td class="negative">'+
                     '<div class="ui dropdown">'+
@@ -81,10 +92,10 @@ function parseSeriesData(data) {
         // nobody wins by default, get both teams and winner
         // actual match
         else {
-            redT = data['items'][i]['redTeam']['team']['teamName'];
-            blueT = data['items'][i]['blueTeam']['team']['teamName'];
-            if (data['items'][i]['winner']['isDecided'] === true) {
-                winner = data['items'][i]['winner']['team']['teamName'];
+            redT = data.items[i].redTeam.team.teamName;
+            blueT = data.items[i].blueTeam.team.teamName;
+            if (data.items[i].winner.isDecided === true) {
+                winner = data.items[i].winner.team.teamName;
                 if (winner === redT) {
                     matchDrop = ''+ // redTeam winner
                         '<td class="negative">'+
@@ -111,8 +122,6 @@ function parseSeriesData(data) {
                         '</div></td>';
             }
         }
-
-        $('#series').append('<tr>');
         $('#series').append(matchDrop);
         // WINNER column
         // color coordinate winner
@@ -122,33 +131,33 @@ function parseSeriesData(data) {
         else {
             $('#series').append('<td class="ui info message">'+winner+'</td>');
         }
-        // RED COLUMN
-        $('#series').append('<td class="negative">'+redT+'</td>');
-        // BLUE COLUMN
-        $('#series').append('<td class="ui info message">'+blueT+'</td>');
+        // RED COLUMN | BLUE COLUMN
+        $('#series').append('<td class="negative">'+redT+'</td>'+
+                '<td class="ui info message">'+blueT+'</td>'
+        );
 
-        // SERIES WINS
+        // SERIES WINS COLUMN
         // add matches won, link to team info
         // should be converted to dropdown table info instead
         // bye matches don't always have team urls/winners
         // so don't link teams or show wins
-        var rWon = data['items'][i].matchesWon.redTeam_str;
-        var bWon = data['items'][i].matchesWon.blueTeam_str;
+        var rWon = data.items[i].matchesWon.redTeam_str;
+        var bWon = data.items[i].matchesWon.blueTeam_str;
         var rLink = '';
         var bLink = '';
-        if ('team' in data['items'][i].redTeam && 'href' in data['items'][i].redTeam.team) {
-            rLink = data['items'][i].redTeam.team.href;
+        if ('team' in data.items[i].redTeam && 'href' in data.items[i].redTeam.team) {
+            rLink = data.items[i].redTeam.team.href;
         }
         else {
             rLink = '#';
         }
-        if ('team' in data['items'][i].blueTeam && 'href' in data['items'][i].blueTeam.team) {
-            bLink = data['items'][i].blueTeam.team.href;
+        if ('team' in data.items[i].blueTeam && 'href' in data.items[i].blueTeam.team) {
+            bLink = data.items[i].blueTeam.team.href;
         }
         else {
             bLink = '#';
         }
-        // should dynamically link team info off this element
+        // TODO -- should dynamically link team info off this element
         var red_blue_teams = "<a id=rWon" + i + "' target='blank' href='"+rLink+"'>"+
                 "<i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" +
                 "<a id=bWon" + i + "' target='blank' href='"+bLink+"'>"+
@@ -156,18 +165,19 @@ function parseSeriesData(data) {
         $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
 
 
-        // MATCHES column
-        // just make the icons, data should be cached here and thus only called
-        // a single time for each series, but still could hit rate-limit
-        // as 1 GET for series data, 1 for matches, 1 for team x lots = >150/sec
-        // append the last <td> 6 match circles here </td>
-        // bye series have no matches
-        $('#series').append('<td><div id="matchTD' + i + '"><div></td>');
+        // ? COLUMN dropdown with match data makeup of each series
+        //show match info and score with winner colored circle
         seriesUrl = data.items[i].self.href;
         populateMatches(seriesUrl, data.items[i].matches.href);
 
         i++; // next match
+
+        // close off row
         $('#series').append('</tr>');
-        $('.ui.dropdown').dropdown();
-    }
+
+    } // - while
+
+    // re-init dropdowns just once not every item
+    $('.ui.dropdown').dropdown();
+
 }
