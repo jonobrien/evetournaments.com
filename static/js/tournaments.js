@@ -5,11 +5,11 @@
 
 $(document).ready(function() {
     // init tournament information and dropdown to begin parsing
-    $('.ui.dropdown').dropdown();
     $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/'>here</a>");
     // hardcode url to avoid querying twice
     var tRoot = "https://crest-tq.eveonline.com/tournaments/";
     populateTournaments(tRoot);
+    $('.ui.dropdown').dropdown();
 
 });// doc.ready
 

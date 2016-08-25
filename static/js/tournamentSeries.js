@@ -123,6 +123,7 @@ function parseSeriesData(data) {
             }
         }
         $('#series').append(matchDrop);
+
         // WINNER column
         // color coordinate winner
         if (winner === redT) {
@@ -157,10 +158,15 @@ function parseSeriesData(data) {
         else {
             bLink = '#';
         }
-        // TODO -- should dynamically link team info off this element
-        var red_blue_teams = "<a id=rWon" + i + "' target='blank' href='"+rLink+"'>"+
+        // dynamically link team info off this element
+        var drop = '<td class="ui info message">'+
+                '<div class="ui dropdown">'+
+                    '<i class="icon circle thin"></i>'+
+                    '<div class="menu" id="matchMenu'+i+'"></div>'+
+                '</div></td>';
+        var red_blue_teams = "<a id=rTeam" + i + "' target='blank' href='"+rLink+"'>"+
                 "<i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" +
-                "<a id=bWon" + i + "' target='blank' href='"+bLink+"'>"+
+                "<a id=bTeam" + i + "' target='blank' href='"+bLink+"'>"+
                 "<i class='blue icon user'/></a> " + bWon;
         $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
 

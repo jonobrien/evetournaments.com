@@ -49,14 +49,15 @@ function parseMatches(url, data) {
     }
     var lenItems = data.totalCount;
     var i = 0;
-    var redTeam = '';
-    var blueTeam = '';
-    var winner = '';
-    var winName = '';
-    var matches = '';
-    var match = '';
+    var rTeam = '' ; var bTeam = '';
+    var rScore = ''; var bScore = '';
+    var winner = ''; var winName = '';
+    var matches = ''; var match = '';
     var itemStart = '<div class="item">';
-    var itemEnd = '</div>';
+    var rDot = '<i class="red icon circle"></i>';
+    var bDot = '<i class="blue icon circle"></i>';
+    var winDot = '';
+    var itemEnd = '</div>'; var space = '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     var s = url.split('/');
     var currInt = s[s.length -2];
     var matchMenu = '#matchMenu' + currInt;
@@ -65,18 +66,23 @@ function parseMatches(url, data) {
         $(matchMenu).append(itemStart + '<i class="icon circle thin"></i>' + itemEnd);
         return;
     }
+    // all other series have data
+    // assume red wins
     while (i < lenItems) {
         winner = data.items[i].winner.href;
-        redTeam = data.items[i].redTeam.href;
-        blueTeam = data.items[i].blueTeam.href;
-        if (winner === redTeam) {
-            winName = data.items[i].redTeam.name;
-            match = '<i class="red icon circle"></i>';
+        rTeam = data.items[i].redTeam.href;
+        bTeam = data.items[i].blueTeam.href;
+        rScore = data.items[i].score.redTeam;
+        bScore = data.items[i].score.blueTeam;
+        winName = data.items[i].redTeam.teamName;
+        winDot = rDot;
+        // winner is given as href team, so compare that
+        if (winner === bTeam) {
+            winName = data.items[i].blueTeam.teamName;
+            winDot = bDot;
         }
-        else {
-            winName = data.items[i].blueTeam.name;
-            match = '<i class="blue icon circle"></i>';
-        }
+        match = winDot + winName + space + 'red: ' + rScore + ' blue: ' + bScore + '<br><br>';
+
 
         matches += match;
         i++;
