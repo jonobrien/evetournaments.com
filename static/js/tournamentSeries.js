@@ -1,5 +1,5 @@
 /*
- * Proof of concept CREST parsing for tournaments series
+ * Proof of concept CREST parsing for tournament series
 */
 
 
@@ -22,20 +22,7 @@ function getSeries(url) {
     // also hardcode it as some data is not correct currently on the endpoint
     // due to AT changes
     url += 'series/';
-    var key = url.replace("https://crest-tq.eveonline.com","");
-    // check if data is already cached
-    var cachedData = getCached(key);
-    // expired or not cached, get new data, cache, parse
-    if (cachedData === null) {
-        cachedData = queryCrest(url);
-        cachedData.success(function(resp) {
-            cache(resp, key);
-            parseSeriesData(resp);
-        });
-    }
-    else {
-        parseSeriesData(cachedData[key]);
-    }
+    retrieveAndParse(url, parseSeriesData)
     // update footer with series we query from
     $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
 }
@@ -173,8 +160,7 @@ function parseSeriesData(data) {
 
         // ? COLUMN dropdown with match data makeup of each series
         //show match info and score with winner colored circle
-        seriesUrl = data.items[i].self.href;
-        populateMatches(seriesUrl, data.items[i].matches.href);
+        populateMatches(data.items[i].matches.href);
 
         i++; // next match
 

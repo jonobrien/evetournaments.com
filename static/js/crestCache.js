@@ -9,14 +9,13 @@ var rateLimit = 0; // max 150
 function queryCrest(crestURL) {
     rateLimit +=1;
     if (rateLimit < max) {
-        //console.log(rateLimit + ' new data: '+ crestURL);
         return $.ajax({
             type: "GET",
             url: crestURL
         });
     }
     else {
-        console.log('hit rateLimit, wait 1');
+        console.log('[!!] hit preventative rateLimit, wait 1, requery');
         rateLimit = 0;
     }
 }
@@ -31,30 +30,23 @@ function queryCrest(crestURL) {
 function getCached(queryStr) {
     var data = null;
     if (typeof(Storage) !== "undefined") {
+        // if you have stored it before, check if expired
+        // otherwise already null
         if (localStorage.getItem(queryStr) !== null) {
             data = JSON.parse(localStorage.getItem(queryStr));
             // if data hasn't expired yet return it
             var now = new Date().getTime();
             if (now < data.cached_until) {
-                //console.log('valid cached until: ' + new Date(data.cached_until));
-                //console.log(data);
                 return data;
             }
             // otherwise don't return it
             else {
-                /*
-                console.log('cached data expired, return null');
-                console.log('cache_expires: ' + data.cached_until);
-                console.log('          now: ' + now);
-                console.log('         diff: ' + (now-data.cached_until));
-                */
                 data = null;
             }
         }
-        // data is null anyway don't need else {}
     }
     else {
-        console.log("localStorage unsupported");
+        console.log("[!!] localStorage unsupported");
     }
     return data;
 }
@@ -62,7 +54,7 @@ function getCached(queryStr) {
 
 /*
  * data is cached for 5 minutes if no parameter passed
- * actually need to parse cache-control header for offset
+ * TODO -- parse cache-control header for offset
 */
 function cache(data, queryStr, cacheOffset) {
     var offset = cacheOffset;
@@ -77,5 +69,31 @@ function cache(data, queryStr, cacheOffset) {
     cacheMe['cached_until'] = cacheDuration;
     // stringify the object so getItem returns the object
     localStorage.setItem(queryStr, JSON.stringify(cacheMe));
-    //console.log("cached until: " + cacheMe.cached_until);
+}
+
+
+/*
+ * Take in a url to query/cache check for
+ * Take in a function to parse that response
+ *
+*/
+function retrieveAndParse(url, parseFunc) {
+
+    var key = url.replace("https://crest-tq.eveonline.com","");
+    // check if data is already cached
+    var cachedData = getCached(key);
+    // expired or not cached, get new data, cache, parse
+    if (cachedData === null) {
+        cachedData = queryCrest(url);
+        cachedData.success(function(resp) {
+            // add in the original url as matches of a bye series
+            //  have no way of knowing which series they are associated with
+            resp['query_url'] = url;
+            cache(resp, key);
+            parseFunc(resp);
+        });
+    }
+    else {
+        parseFunc(cachedData[key]);
+    }
 }

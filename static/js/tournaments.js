@@ -1,5 +1,5 @@
 /*
- * Proof of concept CREST parsing for tournaments endpoint
+ * Proof of concept CREST parsing for tournament endpoint
 */
 
 
@@ -23,21 +23,7 @@ function populateTournaments(url) {
         console.log("cannot populate tournament urls, none passed");
         return -1;
     }
-    var urlStr = url;
-    var key = urlStr.replace("https://crest-tq.eveonline.com","");
-    // check if data is already cached
-    var cachedData = getCached(key);
-    // expired or not cached, get new data
-    if (cachedData === null) {
-        cachedData = queryCrest(url);
-        cachedData.success(function(resp) {
-            cache(resp, key);
-            parseTournaments(resp);
-        });
-    }
-    else {
-        parseTournaments(cachedData[key]);
-    }
+    retrieveAndParse(url, parseTournaments);
 }
 
 

@@ -8,29 +8,12 @@
  * pass in the series url as that has the id associated with the table row
  * query by match url to retrieve matches per series
 */
-function populateMatches(seriesUrl, matchUrl) {
-    if (matchUrl === undefined || matchUrl === null) {
-        console.log("cannot populate matches, no match url passed");
+function populateMatches(url) {
+    if (url === undefined || url === null) {
+        console.log("cannot populate matches, no url passed");
         return -1;
     }
-    if (seriesUrl === undefined || seriesUrl === null) {
-        console.log("cannot populate matches, no series url passed");
-        return -1;
-    }
-    var key = matchUrl.replace("https://crest-tq.eveonline.com","");
-    // check if data is already cached
-    var cachedData = getCached(key);
-    // expired or not cached, get new data
-    if (cachedData === null) {
-        cachedData = queryCrest(matchUrl);
-        cachedData.success(function(resp) {
-            cache(resp, key);
-            parseMatches(seriesUrl, resp);
-        });
-    }
-    else {
-        parseMatches(seriesUrl, cachedData[key]);
-    }
+    retrieveAndParse(url, parseMatches);
 }
 
 
@@ -38,11 +21,7 @@ function populateMatches(seriesUrl, matchUrl) {
  * parse data from /tournaments/<idX>/series/<idY>/matches/ into dropdown in first '?' column
  * pass in the series url as that has the id associated with the table row
 */
-function parseMatches(url, data) {
-    if (url === undefined || url === null) {
-        console.log("cannot parse matches, no url passed");
-        return -1;
-    }
+function parseMatches(data) {
     if (data === undefined || data === null) {
         console.log("cannot parse and append matches, no data passed");
         return -1;
@@ -58,8 +37,8 @@ function parseMatches(url, data) {
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
     var itemEnd = '</div>'; var space = '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    var s = url.split('/');
-    var currInt = s[s.length -2];
+    var s = data.query_url.split('/');
+    var currInt = s[s.length -3];
     var matchMenu = '#matchMenu' + currInt;
     // handle bye series with no matches
     if (lenItems === 0) {
