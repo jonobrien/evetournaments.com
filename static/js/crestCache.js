@@ -5,6 +5,8 @@ var max = 150;
 var rateLimit = 0; // max 150
 /*
  * not cached or expired cache, get data
+ * every 150 requests we forcefully stop as CREST is rate-limited to 150/sec
+ * so this works for a really simple client-side control of that
 */
 function queryCrest(crestURL) {
     rateLimit +=1;
@@ -18,7 +20,7 @@ function queryCrest(crestURL) {
         console.log('[!!] hit preventative rateLimit, wait 1, requery');
         rateLimit = 0;
         $('#rl').empty();
-        $('#rl').append('<div class="ui negative message"><i class="warning sign icon"></i> hit rate limit, please reselect tournament</div>');
+        $('#rl').append('<div class="ui compact negative message"><i class="warning sign icon"></i> rate limit, please reselect tournament</div>');
     }
 }
 

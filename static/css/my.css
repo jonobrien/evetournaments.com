@@ -9,3 +9,7 @@
 .ui.message {
     box-shadow: 0 0 0 0;
 }
+.ui.message>.close.icon {
+    margin: .3em 0em 0em 0em;
+    right: .2em;
+}

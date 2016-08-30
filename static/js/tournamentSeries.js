@@ -26,9 +26,17 @@ function getSeries(url) {
     retrieveAndParse(url, parseSeries);
     // done parsing, TODO -- loading icon with async support
     $('#rl').empty();
-    $('#rl').append('<div class="ui info message">parse complete</div>');
+    $('#rl').append('<div class="ui compact info message"><i class="close icon parsed"></i> parse completed successfully</div>'
+    );
     // update footer with series we query from
     $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
+
+    // messages with close icons can be closed
+    $('.message .close').on('click', function() {
+        $(this)
+            .closest('.message')
+            .transition('fade');
+    });
 }
 
 
