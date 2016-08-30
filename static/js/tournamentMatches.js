@@ -36,7 +36,7 @@ function parseMatches(data) {
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
-    var itemEnd = '</div>'; var space = '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    var itemEnd = '</div>';
     var s = data.query_url.split('/');
     var currInt = s[s.length -3];
     var matchMenu = '#matchMenu' + currInt;
@@ -60,8 +60,7 @@ function parseMatches(data) {
             winName = data.items[i].blueTeam.teamName;
             winDot = bDot;
         }
-        match = winDot + winName + space + 'red: ' + rScore + ' blue: ' + bScore + '<br><br>';
-
+        match = '<div>' + winDot + winName + '<p class="ui header red"> ' + rScore + ' </p> <p class="ui header blue"> ' + bScore + '</p></div>';
 
         matches += match;
         i++;

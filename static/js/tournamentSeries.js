@@ -14,6 +14,7 @@
 function getSeries(url) {
     $('#series').empty();
     $('#ft').empty();
+    $('#rl').empty();
     if (url === undefined || url === null) {
         console.log("cannot get series, no  url passed");
         return -1;
@@ -22,7 +23,10 @@ function getSeries(url) {
     // also hardcode it as some data is not correct currently on the endpoint
     // due to AT changes
     url += 'series/';
-    retrieveAndParse(url, parseSeriesData)
+    retrieveAndParse(url, parseSeries);
+    // done parsing, TODO -- loading icon with async support
+    $('#rl').empty();
+    $('#rl').append('<div class="ui info message">parse complete</div>');
     // update footer with series we query from
     $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
 }
@@ -35,7 +39,7 @@ function getSeries(url) {
  * Series Win column appears to be number of match wins as that color team in the overall tournament (needs documentation to confirm)
  *
 */
-function parseSeriesData(data) {
+function parseSeries(data) {
     if (data === undefined || data === null) {
         console.log("cannot parse series data, none passed");
         return -1;
@@ -70,7 +74,7 @@ function parseSeriesData(data) {
             redT = winner = data.items[i].winner.team.teamName;
             blueT = bye;
             matchDrop = ''+
-                '<td class="negative">'+
+                '<td class="ui negative message">'+
                     '<div class="ui dropdown">'+
                         '<i class="icon circle thin"></i>'+
                     '<div class="menu" id="matchMenu'+i+'"></div>'+
@@ -85,7 +89,7 @@ function parseSeriesData(data) {
                 winner = data.items[i].winner.team.teamName;
                 if (winner === redT) {
                     matchDrop = ''+ // redTeam winner
-                        '<td class="negative">'+
+                        '<td class="ui negative message">'+
                             '<div class="ui dropdown">'+
                                 '<i class="icon circle"></i>'+
                                 '<div class="menu" id="matchMenu'+i+'"></div>'+
@@ -102,7 +106,7 @@ function parseSeriesData(data) {
             }
             else {
                 winner = 'undecided';
-                matchDrop = '<td>'+ // no series winner
+                matchDrop = '<td class="ui message">'+ // no series winner
                         '<div class="ui dropdown">'+
                             '<i class="icon warning circle"></i>'+
                             '<div class="menu" id="matchMenu'+i+'"></div>'+
@@ -171,5 +175,7 @@ function parseSeriesData(data) {
 
     // re-init dropdowns just once not every item
     $('.ui.dropdown').dropdown();
+
+
 
 }

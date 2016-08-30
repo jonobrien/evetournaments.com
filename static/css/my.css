@@ -1,0 +1,11 @@
+/* blue team has shadow */
+.ui.attached.info.message, .ui.info.message {
+    box-shadow: 0px 0px 0px 0px #A9D5DE inset, 0px 0px 0px 0px transparent;
+}
+.header {
+    display:inline;
+}
+/* dropdowns need consistent spacing applied and undecided series have shadows*/
+.ui.message {
+    box-shadow: 0 0 0 0;
+}
