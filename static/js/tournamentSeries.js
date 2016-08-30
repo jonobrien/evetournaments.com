@@ -148,10 +148,14 @@ function parseSeries(data) {
         var rLink = '#';
         var bLink = '#';
         if ('team' in data.items[i].redTeam && 'href' in data.items[i].redTeam.team) {
-            populateTeam(data.items[i].redTeam.team.href);
+            rLink = data.items[i].redTeam.team.href;
+            $('#rTeam'+i)
+                .on('click', function() {
+                  populateTeam(rLink);
+                }
+            );
         }
         else {
-            console.log('red else')
             $('#rTeam'+i)
               .popup({
                   on: 'click',
@@ -160,7 +164,13 @@ function parseSeries(data) {
         }
 
         if ('team' in data.items[i].blueTeam && 'href' in data.items[i].blueTeam.team) {
-            populateTeam(data.items[i].blueTeam.team.href);
+
+            bLink = data.items[i].blueTeam.team.href;
+            $('#bTeam'+i)
+                .on('click', function() {
+                  populateTeam(bLink);
+                }
+            );
         }
         else {
             console.log('blue else')
