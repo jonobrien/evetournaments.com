@@ -14,5 +14,11 @@
     right: .2em;
 }
 .pop {
-  cursor: pointer;
+    cursor: pointer;
+}
+i.red.icon, .ui.red.header {
+    color: #9f3a38!important;
+}
+i.blue.icon, .ui.blue.header {
+    color: #276f86;
 }
