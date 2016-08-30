@@ -57,8 +57,10 @@ function parseSeries(data) {
     var redT = '';
     var blueT = '';
     var winner = '';
-    var matchDrop = '';
+    var matchPopup = '';
     var bye = '- - bye - -';
+    var solidDot = '<i class="icon circle"></i>';
+    var emptyDot = '<i class="icon circle thin"></i>';
     while (i < lenItems) {
         // ? COLUMN
         // attach dropdown to later attach table of matches, etc
@@ -69,24 +71,20 @@ function parseSeries(data) {
                         && data.items[i].redTeam.isBye === true) {
             blueT = winner = data.items[i].winner.team.teamName;
             redT = bye;
-            matchDrop = ''+
-            '<td class="ui info message">'+
-                '<div class="ui dropdown">'+
-                    '<i class="icon circle thin"></i>'+
-                    '<div class="menu" id="matchMenu'+i+'"></div>'+
-                '</div></td>';
+            matchPopup = ''+  // blue wins
+            '<td id="matchMenu'+i+'" class="ui info message pop">'+
+                emptyDot +
+            '</td>';
         }
         // redTeam has bye, no blueTeam present, red wins
         else if ('isBye' in data.items[i].blueTeam
                             && data.items[i].blueTeam.isBye === true) {
             redT = winner = data.items[i].winner.team.teamName;
             blueT = bye;
-            matchDrop = ''+
-                '<td class="ui negative message">'+
-                    '<div class="ui dropdown">'+
-                        '<i class="icon circle thin"></i>'+
-                    '<div class="menu" id="matchMenu'+i+'"></div>'+
-                '</div></td>';
+            matchPopup = ''+  // red wins
+                '<td id="matchMenu'+i+'" class="ui negative message pop">'+
+                   emptyDot +
+                '</td>';
         }
         // nobody wins by default, get both teams and winner
         // actual match
@@ -96,45 +94,47 @@ function parseSeries(data) {
             if (data.items[i].winner.isDecided === true) {
                 winner = data.items[i].winner.team.teamName;
                 if (winner === redT) {
-                    matchDrop = ''+ // redTeam winner
-                        '<td class="ui negative message">'+
-                            '<div class="ui dropdown">'+
-                                '<i class="icon circle"></i>'+
-                                '<div class="menu" id="matchMenu'+i+'"></div>'+
-                            '</div></td>';
+                    matchPopup = ''+  // redTeam winner
+                        '<td id="matchMenu'+i+'" class="ui negative message pop">'+
+                            solidDot +
+                        '</td>';
                 }
                 else {
-                    matchDrop = ''+ // blueTeam winner
-                        '<td class="ui info message">'+
-                            '<div class="ui dropdown">'+
-                                '<i class="icon circle"></i>'+
-                                '<div class="menu" id="matchMenu'+i+'"></div>'+
-                            '</div></td>';
-                }
+                    matchPopup = ''+  // blueTeam winner
+                        '<td id="matchMenu'+i+'" class="ui info message pop">'+
+                            solidDot +
+                        '</td>';
+            }
             }
             else {
                 winner = 'undecided';
-                matchDrop = '<td class="ui message">'+ // no series winner
-                        '<div class="ui dropdown">'+
-                            '<i class="icon warning circle"></i>'+
-                            '<div class="menu" id="matchMenu'+i+'"></div>'+
-                        '</div></td>';
+                matchPopup = '' +  // no series winner
+                    '<td id="matchMenu'+i+'" class="ui message pop">'+ 
+                        '<i class="icon warning circle"></i>'+
+                    '</td>';
             }
         }
-        $('#series').append(matchDrop);
+        $('#series').append(matchPopup);
 
         // WINNER column
         // color coordinate winner
         if (winner === redT) {
-            $('#series').append('<td class="negative">'+winner+'</td>');
+            $('#series').append('<td class="ui negative message">'+winner+'</td>');
         }
-        else {
+        else  if (winner === blueT) {
             $('#series').append('<td class="ui info message">'+winner+'</td>');
         }
+        else { // undecided series
+            $('#series').append('<td class="ui message">'+winner+'</td>');
+        }
+
+
         // RED COLUMN | BLUE COLUMN
-        $('#series').append('<td class="negative">'+redT+'</td>'+
-                '<td class="ui info message">'+blueT+'</td>'
+        $('#series').append('' +
+            '<td class="ui negative message">'+redT+'</td>'+
+            '<td class="ui info message">'+blueT+'</td>'
         );
+
 
         // SERIES WINS COLUMN
         // add matches won, link to team info
@@ -158,10 +158,10 @@ function parseSeries(data) {
             bLink = '#';
         }
         // dynamically link team info off this element
-        var drop = '<td class="ui info message">'+
+        var teamPop = '<td class="ui message">'+
                 '<div class="ui dropdown">'+
                     '<i class="icon circle thin"></i>'+
-                    '<div class="menu" id="matchMenu'+i+'"></div>'+
+                    '<div class="menu" id="team'+i+'"></div>'+
                 '</div></td>';
         var red_blue_teams = "<a id=rTeam" + i + "' target='blank' href='"+rLink+"'>"+
                 "<i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" +

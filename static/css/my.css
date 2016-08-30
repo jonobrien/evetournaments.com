@@ -13,3 +13,6 @@
     margin: .3em 0em 0em 0em;
     right: .2em;
 }
+.pop {
+  cursor: pointer;
+}

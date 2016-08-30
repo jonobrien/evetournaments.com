@@ -32,17 +32,19 @@ function parseMatches(data) {
     var rScore = ''; var bScore = '';
     var winner = ''; var winName = '';
     var matches = ''; var match = '';
-    var itemStart = '<div class="item">';
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
-    var itemEnd = '</div>';
     var s = data.query_url.split('/');
     var currInt = s[s.length -3];
     var matchMenu = '#matchMenu' + currInt;
     // handle bye series with no matches
     if (lenItems === 0) {
-        $(matchMenu).append(itemStart + '<i class="icon circle thin"></i>' + itemEnd);
+        $(matchMenu)
+        .popup({
+            on: 'click',
+            html: '<i class="icon circle thin"></i>'
+        });
         return;
     }
     // all other series have data
@@ -65,7 +67,10 @@ function parseMatches(data) {
         matches += match;
         i++;
     }
-    var final = itemStart + matches + itemEnd;
     // attach to the dropdown in the '?' type column
-    $(matchMenu).append(final);
+    $(matchMenu)
+    .popup({
+        on: 'click',
+        html: matches
+    });
 }
