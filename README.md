@@ -9,5 +9,6 @@ $ node server.js
 
 # endpoints
 - /tournaments/
+- /tournaments/teams/`<id>`/
 - /tournaments/`<id>`/series/
-- /tournaments/`<id>`/series/`<id>`/matches/
+- /tournaments/`<idX>`/series/`<idY>`/matches/

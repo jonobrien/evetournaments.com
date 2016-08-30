@@ -104,7 +104,7 @@ function parseSeries(data) {
                         '<td id="matchMenu'+i+'" class="ui info message pop">'+
                             solidDot +
                         '</td>';
-            }
+                }
             }
             else {
                 winner = 'undecided';
@@ -137,37 +137,39 @@ function parseSeries(data) {
 
 
         // SERIES WINS COLUMN
-        // add matches won, link to team info
-        // should be converted to dropdown table info instead
-        // bye matches don't always have team urls/winners
-        // so don't link teams or show wins
+        // add matches won, popup showing team information
         var rWon = data.items[i].matchesWon.redTeam_str;
         var bWon = data.items[i].matchesWon.blueTeam_str;
-        var rLink = '';
-        var bLink = '';
+        var red_blue_teams = '' +
+                '<i id="rTeam' + i + '" class="red icon user pop"/> ' + rWon + '&nbsp;&nbsp;' +
+                '<i id="bTeam' + i + '" class="blue icon user pop"/> ' + bWon;
+        $('#series').append('<td>'+ red_blue_teams + '</td>');
+        // parse each team url if there is one
+        var rLink = '#';
+        var bLink = '#';
         if ('team' in data.items[i].redTeam && 'href' in data.items[i].redTeam.team) {
-            rLink = data.items[i].redTeam.team.href;
+            populateTeam(data.items[i].redTeam.team.href);
         }
         else {
-            rLink = '#';
+            console.log('red else')
+            $('#rTeam'+i)
+              .popup({
+                  on: 'click',
+                  html: '<p>bye series, no data available</p>'
+            });
         }
+
         if ('team' in data.items[i].blueTeam && 'href' in data.items[i].blueTeam.team) {
-            bLink = data.items[i].blueTeam.team.href;
+            populateTeam(data.items[i].blueTeam.team.href);
         }
         else {
-            bLink = '#';
+            console.log('blue else')
+            $('#bTeam'+i)
+              .popup({
+                  on: 'click',
+                  html: '<p>bye series, no data available</p>'
+            });
         }
-        // dynamically link team info off this element
-        var teamPop = '<td class="ui message">'+
-                '<div class="ui dropdown">'+
-                    '<i class="icon circle thin"></i>'+
-                    '<div class="menu" id="team'+i+'"></div>'+
-                '</div></td>';
-        var red_blue_teams = "<a id=rTeam" + i + "' target='blank' href='"+rLink+"'>"+
-                "<i class='red icon user'/></a> " + rWon + "&nbsp;&nbsp;" +
-                "<a id=bTeam" + i + "' target='blank' href='"+bLink+"'>"+
-                "<i class='blue icon user'/></a> " + bWon;
-        $('#series').append('<td id=match' + i + '>'+ red_blue_teams + '</td>');
 
 
         // ? COLUMN dropdown with match data makeup of each series
@@ -175,15 +177,9 @@ function parseSeries(data) {
         populateMatches(data.items[i].matches.href);
 
         i++; // next match
-
-        // close off row
         $('#series').append('</tr>');
-
     } // - while
-
-    // re-init dropdowns just once not every item
-    $('.ui.dropdown').dropdown();
-
+    $('.ui.dropdown').dropdown();  // re-init dropdowns just once not every item
 
 
 }
