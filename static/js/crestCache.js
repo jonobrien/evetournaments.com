@@ -81,8 +81,8 @@ function cache(data, queryStr, cacheOffset) {
  * Take in a function to parse that response
  *
 */
-function retrieveAndParse(url, parseFunc) {
-
+function retrieveAndParse(url, parseFunc, optArgs) {
+    var opt = arguments.length;
     var key = url.replace("https://crest-tq.eveonline.com","");
     // check if data is already cached
     var cachedData = getCached(key);
@@ -91,13 +91,27 @@ function retrieveAndParse(url, parseFunc) {
         cachedData = queryCrest(url);
         cachedData.success(function(resp) {
             // add in the original url as matches of a bye series
-            //  have no way of knowing which series they are associated with
+            //  have no way of knowing which series they are associated with, team still doesn't have series <id>
             resp['query_url'] = url;
             cache(resp, key);
-            parseFunc(resp);
+            // teams need associated series <id>
+            switch (opt) {
+                case 3: parseFunc(resp, optArgs);break;
+                default: parseFunc(resp);break;
+            }
+        }); // every CREST call is successful, ccp returns json error message
+        cachedData.error(function(resp, err) {
+            console.log('[!!] error in retrieving new data:');
+            console.log('[!!] attempted: ' + url);
+            console.log(resp);
+            console.log(err);
         });
     }
+    // already cached
     else {
-        parseFunc(cachedData[key]);
+        switch (opt) {
+            case 3: parseFunc(cachedData[key], optArgs);break;
+            default: parseFunc(cachedData[key]);break;
+        }
     }
 }
