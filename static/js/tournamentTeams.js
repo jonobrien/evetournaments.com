@@ -6,23 +6,35 @@
 /*
  * query for team information
 */
-function populateTeam(url) {
-    if (url === undefined || url === null) {
+function populateTeam(args) {
+    if (args.url === undefined || args.url === null) {
         console.log("cannot populate team, no url passed");
         return -1;
     }
-    //retrieveAndParse(url, parseTeam);
+    if (args.series === undefined || args.series === null) {
+        console.log("cannot populate team, no series id passed");
+        return -1;
+    }
+    retrieveAndParse(args.url, parseTeam, args.series);
 }
 
 
 /*
  * parse data from /tournaments/teams/<id>/
+ * added switch statement in crestCache.retrieveAndParse just for seriesID
 */
-function parseTeam(data) {
-    if (data === undefined || data === null) {
-        console.log("cannot parse team, no data passed");
+function parseTeam(data, seriesID) {
+    if (data.captain === undefined || data.captain === null) {
+        console.log("cannot parse team, invalid data passed");
         return -1;
     }
+    if (seriesID === undefined || seriesID === null) {
+        console.log("cannot attach team, no id passed");
+        return -1;
+    }
+    // members and pilots arrays seem redundant, can get same information in the array already given
+    // as the members query would be increased load on the API servers
+    // ** does allow for linking
     var lenItems = data.totalCount;
     var i = 0;
     var rTeam = '' ; var bTeam = '';
@@ -32,18 +44,7 @@ function parseTeam(data) {
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
-    var s = data.query_url.split('/');
-    var currInt = s[s.length -3];
-    var matchMenu = '#matchMenu' + currInt;
-    // handle bye series with no matches
-    if (lenItems === 0) {
-        $(matchMenu)
-        .popup({
-            on: 'click',
-            html: '<i class="icon circle thin"></i>'
-        });
-        return;
-    }
+
     // all other series have data
     // assume red wins
     while (i < lenItems) {
@@ -64,10 +65,23 @@ function parseTeam(data) {
         matches += match;
         i++;
     }
-    // attach to the dropdown in the '?' type column
-    $(matchMenu)
+
+    // attach to the dropdown in the 'SERIES WINS' icons
+    cleanupHtml(seriesID);
+    $('#'+seriesID)
     .popup({
         on: 'click',
-        html: matches
-    });
+        html: '<p>hi</p>'
+    }).popup('show');
+}
+
+
+// remove the hardcoded onclick
+function cleanupHtml(id) {
+    //console.log($('#'+id));
+    var str = $('#'+id)[0].outerHTML;
+    var arr = str.split('"');
+    arr.splice(4,2);
+    str = arr.join('"');
+    $('#'+id)[0].outerHTML = str;
 }

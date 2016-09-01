@@ -140,47 +140,65 @@ function parseSeries(data) {
         // add matches won, popup showing team information
         var rWon = data.items[i].matchesWon.redTeam_str;
         var bWon = data.items[i].matchesWon.blueTeam_str;
-        var red_blue_teams = '' +
-                '<i id="rTeam' + i + '" class="red icon user pop"/> ' + rWon + '&nbsp;&nbsp;' +
-                '<i id="bTeam' + i + '" class="blue icon user pop"/> ' + bWon;
-        $('#series').append('<td>'+ red_blue_teams + '</td>');
-        // parse each team url if there is one
+        
+        // parse each team info respectively
+        var red = '';
+        var blue = '';
         var rLink = '#';
         var bLink = '#';
+        // bye var here associated with team being parsable or not
+        // see above comments about who is actually
+        var rPresent = true;
+        var bPresent = true;
+        var rArgs = {"url":rLink, "series": i};
+        var bArgs = {"url":bLink, "series": i};
+        // TODO -- refactor this logic
+
+        // make icons and add click event for making popup
+        // if team href not in json, just make simple popup
         if ('team' in data.items[i].redTeam && 'href' in data.items[i].redTeam.team) {
             rLink = data.items[i].redTeam.team.href;
-            $('#rTeam'+i)
-                .on('click', function() {
-                  populateTeam(rLink);
-                }
-            );
+            rArgs.url = rLink;
+            rArgs.series = 'rTeam' + i;
+            red = '<i id="rTeam' + i + '" class="red icon user pop" '+
+                    'onclick=populateTeam('+JSON.stringify(rArgs)+')/> ' + rWon;
         }
         else {
-            $('#rTeam'+i)
-              .popup({
-                  on: 'click',
-                  html: '<p>bye series, no data available</p>'
-            });
+            red = '<i id="rTeam' + i + '" class="red icon user pop" <i/> ' + rWon;
+            rPresent = false;
         }
-
         if ('team' in data.items[i].blueTeam && 'href' in data.items[i].blueTeam.team) {
-
             bLink = data.items[i].blueTeam.team.href;
-            $('#bTeam'+i)
-                .on('click', function() {
-                  populateTeam(bLink);
-                }
-            );
+            bArgs.url = bLink;
+            bArgs.series = 'bTeam' + i;
+            blue = '<i id="bTeam' + i + '" class="blue icon user pop" '+
+                    'onclick=populateTeam('+JSON.stringify(bArgs)+')/> ' + bWon;
         }
         else {
-            console.log('blue else')
-            $('#bTeam'+i)
-              .popup({
-                  on: 'click',
-                  html: '<p>bye series, no data available</p>'
+            blue = '<i id="bTeam' + i + '" class="blue icon user pop" <i/> ' + bWon;
+            bPresent = false;
+        }
+        var red_blue_teams = '' +
+                red + '&nbsp;&nbsp;' + blue;
+
+        // add the html with or without the click event
+        $('#series').append('<td>'+ red_blue_teams + '</td>');
+
+        // add simple popups if no team data present
+        if (rPresent === false) {
+            $('#rTeam'+i)
+            .popup({
+                on: 'click',
+                html: '<p>bye series, no team data available</p>'
             });
         }
-
+        if (bPresent === false) {
+            $('#bTeam'+i)
+            .popup({
+                on: 'click',
+                html: '<p>bye series, no team data available</p>'
+            });
+        }
 
         // ? COLUMN dropdown with match data makeup of each series
         //show match info and score with winner colored circle
