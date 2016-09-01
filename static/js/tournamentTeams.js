@@ -32,46 +32,37 @@ function parseTeam(data, seriesID) {
         console.log("cannot attach team, no id passed");
         return -1;
     }
-    // members and pilots arrays seem redundant, can get same information in the array already given
-    // as the members query would be increased load on the API servers
-    // ** does allow for linking
-    var lenItems = data.totalCount;
+    console.log(data)
+    // members object seem redundant, can get same information in the pilots array
+    // ** does allow for linking endpoints dynamically though
+    var nPilots = data.pilots.length;
+    var pilots = '<div class="ui segments">';
+    var seg = '<div class="ui segment">';
     var i = 0;
-    var rTeam = '' ; var bTeam = '';
+    var rTeam = '' ; var endiv = '</div>';
     var rScore = ''; var bScore = '';
     var winner = ''; var winName = '';
     var matches = ''; var match = '';
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
-
+    var name = ''; var pic = '';
     // all other series have data
     // assume red wins
-    while (i < lenItems) {
-        winner = data.items[i].winner.href;
-        rTeam = data.items[i].redTeam.href;
-        bTeam = data.items[i].blueTeam.href;
-        rScore = data.items[i].score.redTeam;
-        bScore = data.items[i].score.blueTeam;
-        winName = data.items[i].redTeam.teamName;
-        winDot = rDot;
-        // winner is given as href team, so compare that
-        if (winner === bTeam) {
-            winName = data.items[i].blueTeam.teamName;
-            winDot = bDot;
-        }
-        match = '<div>' + winDot + winName + '<p class="ui header red"> ' + rScore + ' </p> <p class="ui header blue"> ' + bScore + '</p></div>';
+    while (i < 2) {
+        name = '<p>' + data.pilots[i].name + '</p>';
+        pic ='<div class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_64') + '">' + endiv;
+        pilots += seg + pic + name + endiv;
 
-        matches += match;
         i++;
     }
-
+    pilots += endiv;
     // attach to the dropdown in the 'SERIES WINS' icons
     cleanupHtml(seriesID);
     $('#'+seriesID)
     .popup({
         on: 'click',
-        html: '<p>hi</p>'
+        html: pilots
     }).popup('show');
 }
 
