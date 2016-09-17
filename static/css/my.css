@@ -22,3 +22,6 @@ i.red.icon, .ui.red.header {
 i.blue.icon, .ui.blue.header {
     color: #276f86;
 }
+.win {
+	font-weight: 600;
+}

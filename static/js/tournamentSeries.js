@@ -21,7 +21,7 @@ function getSeries(url) {
     }
     // hard code url here to avoid querying an extra time
     // also hardcode it as some data is not correct currently on the endpoint
-    // due to AT changes
+    // due to AT changes -- see ccp doc issue 199 for reference
     url += 'series/';
     retrieveAndParse(url, parseSeries);
     // done parsing, TODO -- loading icon with async support
@@ -62,11 +62,22 @@ function parseSeries(data) {
     var solidDot = '<i class="icon circle"></i>';
     var emptyDot = '<i class="icon circle thin"></i>';
     while (i < lenItems) {
-        // ? COLUMN
-        // attach dropdown to later attach table of matches, etc
-
-        // blueTeam has bye, no redTeam present, blue wins
+        // new series
         $('#series').append('<tr>');
+
+        // ? COLUMN
+        // undecided - nobody wins
+        // winner - either red or blue
+        // bye series - only 1 team data present
+
+        // nobody wins by default (undecided) series
+        winner = 'undecided';
+        matchPopup = '' +  // no series winner
+            '<td id="matchMenu'+i+'" class="ui message pop">'+
+                '<i class="icon warning circle"></i>'+
+            '</td>';
+        // bye series:
+        // blueTeam wins/has bye, no redTeam present
         if ('isBye' in data.items[i].redTeam
                         && data.items[i].redTeam.isBye === true) {
             blueT = winner = data.items[i].winner.team.teamName;
@@ -76,7 +87,8 @@ function parseSeries(data) {
                 emptyDot +
             '</td>';
         }
-        // redTeam has bye, no blueTeam present, red wins
+        // bye series:
+        // redTeam wins/has bye, no blueTeam present
         else if ('isBye' in data.items[i].blueTeam
                             && data.items[i].blueTeam.isBye === true) {
             redT = winner = data.items[i].winner.team.teamName;
@@ -86,8 +98,9 @@ function parseSeries(data) {
                    emptyDot +
                 '</td>';
         }
-        // nobody wins by default, get both teams and winner
-        // actual match
+        //
+        // actual matches played:
+        // get both teams and series winner
         else {
             redT = data.items[i].redTeam.team.teamName;
             blueT = data.items[i].blueTeam.team.teamName;
@@ -106,35 +119,29 @@ function parseSeries(data) {
                         '</td>';
                 }
             }
-            else {
-                winner = 'undecided';
-                matchPopup = '' +  // no series winner
-                    '<td id="matchMenu'+i+'" class="ui message pop">'+ 
-                        '<i class="icon warning circle"></i>'+
-                    '</td>';
-            }
         }
         $('#series').append(matchPopup);
 
-        // WINNER column
-        // color coordinate winner
+        // RED COLUMN | BLUE COLUMN
+        // bold winner
         if (winner === redT) {
-            $('#series').append('<td class="ui negative message">'+winner+'</td>');
+            $('#series').append(''+
+                '<td class="ui negative message win">'+winner+'</td>'+
+                '<td class="ui info message">'+blueT+'</td>'
+            );
         }
         else  if (winner === blueT) {
-            $('#series').append('<td class="ui info message">'+winner+'</td>');
+            $('#series').append(''+
+                '<td class="ui negative message">'+redT+'</td>'+
+                '<td class="ui info message win">'+winner+'</td>'
+            );
         }
         else { // undecided series
-            $('#series').append('<td class="ui message">'+winner+'</td>');
+            $('#series').append('' +
+                '<td class="ui negative message">'+redT+'</td>'+
+                '<td class="ui info message">'+blueT+'</td>'
+            );
         }
-
-
-        // RED COLUMN | BLUE COLUMN
-        $('#series').append('' +
-            '<td class="ui negative message">'+redT+'</td>'+
-            '<td class="ui info message">'+blueT+'</td>'
-        );
-
 
         // SERIES WINS COLUMN
         // add matches won, popup showing team information
@@ -207,6 +214,7 @@ function parseSeries(data) {
         i++; // next match
         $('#series').append('</tr>');
     } // - while
+
     $('.ui.dropdown').dropdown();  // re-init dropdowns just once not every item
 
 
