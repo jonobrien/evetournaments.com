@@ -55,5 +55,5 @@ else {
     });
 }
 
-app.listen(portno);
+app.listen(process.env.PORT || portno);
 console.log("running on " + portno);
