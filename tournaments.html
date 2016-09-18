@@ -20,27 +20,33 @@
 
 <body>
     <!-- should css these spaces -->
-    <div>
-        <div class="ui button disabled simple">
-            <i class= "help circle icon"></i>series:&nbsp;&nbsp;
-            completed&nbsp;&nbsp;<i class="icon circle"></i>
-            bye&nbsp;&nbsp;<i class="icon circle thin"></i>
-            undecided&nbsp;&nbsp;<i class="icon warning circle"></i>
+    <div class="ui two column container">
+        <div class="ui menu">
+        <div class="ui right dropdown item">
+            <i class="dropdown icon"></i>&nbsp;&nbsp;
+            <span class="text">Tournament</span>
+            <div id="tourns" class="menu"></div>
         </div>
-
-        <div class="ui floating labeled icon dropdown button">
-            <i class="dropdown icon"></i>
-            <span class="text">Choose a Tournament</span>
-            <div id="tourns" class="right menu"></div>
-        </div>
-        <div class="ui" id="rl"></div>
     </div>
-
+    <div class="column">
+                            <div class="ui" id="rl"></div>
     <div>
         <table class="ui celled compact table collapsing">
             <thead>
                 <tr>
-                    <th><i class= "help circle icon"></i></th>
+                    <th>
+                        <div class="ui dropdown">
+                            <i class="help circle icon"></i>
+                            <div class="menu">
+                                <div class="ui item disabled">
+                                    <i class= "help circle icon"></i>series:&nbsp;&nbsp;
+                                    completed&nbsp;&nbsp;<i class="icon circle"></i>
+                                    bye&nbsp;&nbsp;<i class="icon circle thin"></i>
+                                    undecided&nbsp;&nbsp;<i class="icon warning circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
                     <!-- some tournamets these use FC names, 
                         some use alliance names... -->
                     <th>Red</th>
@@ -50,6 +56,17 @@
             </thead>
           <tbody id="series"></tbody>
         </table>
+    </div>
+    </div>
+    <div class="column">
+    <table class="ui celled compact table collapsing">
+            <thead>
+                <tr>
+                </tr>
+            </thead>
+          <tbody id="series"></tbody>
+        </table>
+    </div>
     </div>
 
 
