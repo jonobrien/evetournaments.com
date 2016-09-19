@@ -1,7 +1,8 @@
 <head>
 
     <meta charset="utf-8">
-    <link rel="icon" type="image/gif" href="http://i.giphy.com/3oEduVGyuRGuZXaqys.gif">
+    <link rel="icon" type="image/gif" href="static/fav.ico">
+    <title>evetournaments.com</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <!-- https://cdnjs.com/libraries/semantic-ui css here-->
@@ -19,19 +20,22 @@
 
 
 <body>
-    <!-- should css these spaces -->
-    <div class="ui two column container">
-        <div class="ui menu">
-        <div class="ui right dropdown item">
+<div class="ui menu">
+    <div class="header item">
+    <i class="big crosshairs icon"></i>EVETOURNAMENTS.COM
+    </div>
+        <div class="ui dropdown item">
             <i class="dropdown icon"></i>&nbsp;&nbsp;
             <span class="text">Tournament</span>
             <div id="tourns" class="menu"></div>
         </div>
+        <div class="ui right" id="rl"></div>
     </div>
-    <div class="column">
-                            <div class="ui" id="rl"></div>
+    <!-- should css these spaces -->
+    <div class="ui equal width grid">
+    <div class="eight wide column">
     <div>
-        <table class="ui celled compact table collapsing">
+        <table class="ui very basic compact celled table">
             <thead>
                 <tr>
                     <th>
@@ -39,10 +43,10 @@
                             <i class="help circle icon"></i>
                             <div class="menu">
                                 <div class="ui item disabled">
-                                    <i class= "help circle icon"></i>series:&nbsp;&nbsp;
-                                    completed&nbsp;&nbsp;<i class="icon circle"></i>
-                                    bye&nbsp;&nbsp;<i class="icon circle thin"></i>
-                                    undecided&nbsp;&nbsp;<i class="icon warning circle"></i>
+                                    <i class= "help circle icon"></i>series type:&nbsp;&nbsp;
+                                    <i class="icon circle"></i>completed&nbsp;&nbsp;
+                                    <i class="icon circle thin"></i>bye&nbsp;&nbsp;
+                                    <i class="icon warning circle"></i>undecided&nbsp;&nbsp;
                                 </div>
                             </div>
                         </div>
@@ -54,17 +58,17 @@
                     <th>Series Wins</th>
                 </tr>
             </thead>
-          <tbody id="series"></tbody>
+          <tbody class="compact" id="series"></tbody>
         </table>
     </div>
     </div>
-    <div class="column">
+    <div class="four wide column">
     <table class="ui celled compact table collapsing">
             <thead>
-                <tr>
+                <tr id="extraRow">
                 </tr>
             </thead>
-          <tbody id="series"></tbody>
+          <tbody id="extraB"></tbody>
         </table>
     </div>
     </div>
@@ -85,7 +89,9 @@
   <!-- semantic js needs to go here -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
 
-<footer id="ft"></footer>
+<footer class="segment">
+    <div id="ft"></div>
+</footer>
 </body>
 
 
