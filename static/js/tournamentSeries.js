@@ -57,11 +57,14 @@ function parseSeries(data) {
     var redT = '';
     var blueT = '';
     var winner = '';
+    var rbTeamNames = '';
     var matchPopup = '';
     var bye = '- - bye - -';
     var solidDot = '<i class="icon circle"></i>';
     var emptyDot = '<i class="icon circle thin"></i>';
     while (i < lenItems) {
+        var rPresent = true;
+        var bPresent = true;
         // new series
         $('#series').append('<tr>');
 
@@ -83,9 +86,10 @@ function parseSeries(data) {
             blueT = winner = data.items[i].winner.team.teamName;
             redT = bye;
             matchPopup = ''+  // blue wins
-            '<td id="matchMenu'+i+'" class="ui info message pop">'+
-                emptyDot +
-            '</td>';
+                '<td id="matchMenu'+i+'" class="ui info message pop">'+
+                    emptyDot +
+                '</td>';
+            rPresent = false;
         }
         // bye series:
         // redTeam wins/has bye, no blueTeam present
@@ -97,6 +101,7 @@ function parseSeries(data) {
                 '<td id="matchMenu'+i+'" class="ui negative message pop">'+
                    emptyDot +
                 '</td>';
+            bPresent = false;
         }
         //
         // actual matches played:
@@ -120,27 +125,23 @@ function parseSeries(data) {
                 }
             }
         }
-        $('#series').append(matchPopup);
 
         // RED COLUMN | BLUE COLUMN
         // bold winner
         if (winner === redT) {
-            $('#series').append(''+
+            rbTeamNames = ''+
                 '<td class="ui negative message win">'+winner+'</td>'+
                 '<td class="ui info message">'+blueT+'</td>'
-            );
         }
         else  if (winner === blueT) {
-            $('#series').append(''+
+            rbTeamNames = ''+
                 '<td class="ui negative message">'+redT+'</td>'+
                 '<td class="ui info message win">'+winner+'</td>'
-            );
         }
         else { // undecided series
-            $('#series').append('' +
+            rbTeamNames = ''+
                 '<td class="ui negative message">'+redT+'</td>'+
                 '<td class="ui info message">'+blueT+'</td>'
-            );
         }
 
         // SERIES WINS COLUMN
@@ -153,42 +154,35 @@ function parseSeries(data) {
         var blue = '';
         var rLink = '#';
         var bLink = '#';
-        // bye var here associated with team being parsable or not
-        // see above comments about who is actually
-        var rPresent = true;
-        var bPresent = true;
         var rArgs = {"url":rLink, "series": i};
         var bArgs = {"url":bLink, "series": i};
-        // TODO -- refactor this logic
 
         // make icons and add click event for making popup
-        // if team href not in json, just make simple popup
-        if ('team' in data.items[i].redTeam && 'href' in data.items[i].redTeam.team) {
+        // default bye series, no data present, if there is data, use it
+        red = '<i id="rTeam' + i + '" class="red icon user pop" <i/> ' + rWon;
+        blue = '<i id="bTeam' + i + '" class="blue icon user pop" <i/> ' + bWon;
+        if (rPresent === true) {
             rLink = data.items[i].redTeam.team.href;
             rArgs.url = rLink;
             rArgs.series = 'rTeam' + i;
             red = '<i id="rTeam' + i + '" class="red icon user pop" '+
                     'onclick=populateTeam('+JSON.stringify(rArgs)+')/> ' + rWon;
         }
-        else {
-            red = '<i id="rTeam' + i + '" class="red icon user pop" <i/> ' + rWon;
-            rPresent = false;
-        }
-        if ('team' in data.items[i].blueTeam && 'href' in data.items[i].blueTeam.team) {
+        if (bPresent === true) {
             bLink = data.items[i].blueTeam.team.href;
             bArgs.url = bLink;
             bArgs.series = 'bTeam' + i;
             blue = '<i id="bTeam' + i + '" class="blue icon user pop" '+
                     'onclick=populateTeam('+JSON.stringify(bArgs)+')/> ' + bWon;
         }
-        else {
-            blue = '<i id="bTeam' + i + '" class="blue icon user pop" <i/> ' + bWon;
-            bPresent = false;
-        }
         var red_blue_teams = '' +
                 red + '&nbsp;&nbsp;' + blue;
 
-        // add the html with or without the click event
+        // append the series type popup
+        $('#series').append(matchPopup);
+        // append RED | BLUE team names
+        $('#series').append(rbTeamNames);
+        // append the team information with or without the click event
         $('#series').append('<td>'+ red_blue_teams + '</td>');
 
         // add simple popups if no team data present
