@@ -25,3 +25,9 @@ i.blue.icon, .ui.blue.header {
 .win {
 	font-weight: 600;
 }
+.ui.compact.table td {
+    padding: .4em .4em .4em .4em;
+}
+.ui.dropdown {
+	padding-left: .4em;
+}
