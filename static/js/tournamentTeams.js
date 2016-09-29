@@ -32,38 +32,45 @@ function parseTeam(data, seriesID) {
         console.log("cannot attach team, no id passed");
         return -1;
     }
+    $('#teamH').empty();
+    $('#teamB').empty();
+
     console.log(data)
     // members object seem redundant, can get same information in the pilots array
     // ** does allow for linking endpoints dynamically though
     var nPilots = data.pilots.length;
-    var pilots = '<div class="ui segments">';
-    var seg = '<div class="ui segment">';
-    var i = 0;
-    var rTeam = '' ; var endiv = '</div>';
-    var rScore = ''; var bScore = '';
-    var winner = ''; var winName = '';
-    var matches = ''; var match = '';
+    var pilots = ''; var i = 0;
+    header = '' +
+        '<th>'+ data.shipsKilled_str +' ships killed by </th>' +
+        '<th>'+data.name+'</th>'
+    var rTeam = '' ; var endrow = '</tr>';
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
     var name = ''; var pic = '';
     // all other series have data
     // assume red wins
-    while (i < 2) {
-        name = '<p>' + data.pilots[i].name + '</p>';
-        pic ='<div class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_64') + '">' + endiv;
-        pilots += seg + pic + name + endiv;
+    while (i < nPilots) {
+        pic ='<td class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_64') + '"></td>';
+        console.log(data.pilots[i].name)
+        console.log(data.captain.name)
+        if (data.pilots[i].name === data.captain.name) {
+            name = '<td class="win">' + data.pilots[i].name + '</td>';
+        }
+        else {
+            name = '<td>' + data.pilots[i].name + '</td>';
+        }
+        pilots += '<tr>'+ pic + name + endrow;
 
         i++;
     }
-    pilots += endiv;
+
+
+
     // attach to the dropdown in the 'SERIES WINS' icons
-    cleanupHtml(seriesID);
-    $('#'+seriesID)
-    .popup({
-        on: 'click',
-        html: pilots
-    }).popup('show');
+    //cleanupHtml(seriesID);
+    $('#teamH').append(header);
+    $('#teamB').append(pilots);
 }
 
 

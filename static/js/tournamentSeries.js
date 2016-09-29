@@ -14,6 +14,8 @@
 function getSeries(url) {
     $('#series').empty();
     $('#ft').empty();
+    $('#teamH').empty();
+    $('#teamB').empty();
     $('#rl').empty();
     if (url === undefined || url === null) {
         console.log("cannot get series, no  url passed");
@@ -27,13 +29,6 @@ function getSeries(url) {
     // done parsing, TODO -- loading icon with async support
     // update footer with series we query from
     $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
-
-    // messages with close icons can be closed
-    $('.message .close').on('click', function() {
-        $(this)
-            .closest('.message')
-            .transition('fade');
-    });
 }
 
 
@@ -207,8 +202,6 @@ function parseSeries(data) {
     } // - while
 
     $('.ui.dropdown').dropdown();  // re-init dropdowns just once not every item
-    $('#rl').append('<div class="ui compact info message"><i class="close icon parsed"></i> parse completed successfully</div>'
-    );
 
 
 }
