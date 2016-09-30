@@ -50,8 +50,8 @@ function parseTeam(data, seriesID) {
     var j = 0;
     var k = 0;
     tHeader = '' +
-        '<th>'+ data.shipsKilled_str +' ships worth '+data.iskKilled_str+'</th>' +
-        '<th>'+data.name+'</th>'
+        '<th>' + data.shipsKilled_str + ' ships destroyed worth '+ data.iskKilled_str +  '</th>' +
+        '<th>' + data.name + '</th>'
     bHeader = '' +
         '<th> banned</th>' +
         '<th> #/this AT - ship</th>'
