@@ -27,6 +27,7 @@ i.blue.icon, .ui.blue.header {
 }
 .ui.compact.table td {
     padding: .4em .4em .4em .4em;
+
 }
 .ui.dropdown {
 	padding-left: .4em;
@@ -36,4 +37,5 @@ i.blue.icon, .ui.blue.header {
 }
 .ui.celled.table tr td, .ui.celled.table tr th {
     border-left:none;
+
 }

@@ -38,7 +38,6 @@ function parseTeam(data, seriesID) {
     $('#banH').empty();
     $('#banB').empty();
 
-    console.log(data)
     // members object seem redundant, can get same information in the pilots array
     // ** does allow for linking endpoints dynamically though
     var nPilots = data.pilots.length;
@@ -46,16 +45,16 @@ function parseTeam(data, seriesID) {
     var nBansAgainst = data.banFrequencyAgainst.length;
     var pilots = '';
     var bans = '';
-    var bansAgains = '';
+    var bansAgainst = '';
     var i = 0;
     var j = 0;
     var k = 0;
     tHeader = '' +
-        '<th>'+ data.shipsKilled_str +' ships worth <p>'+data.iskKilled_str+'</p> killed by </th>' +
+        '<th>'+ data.shipsKilled_str +' ships worth '+data.iskKilled_str+'</th>' +
         '<th>'+data.name+'</th>'
     bHeader = '' +
-        '<th>'+ data.name +' has banned </th>' +
-        '<th> number/this AT - ship</th>'
+        '<th> banned</th>' +
+        '<th> #/this AT - ship</th>'
     var rTeam = '' ; var endrow = '</tr>';
     var rDot = '<i class="red icon circle"></i>';
     var bDot = '<i class="blue icon circle"></i>';
@@ -64,7 +63,7 @@ function parseTeam(data, seriesID) {
     // all other series have data
     // assume red wins
     while (i < nPilots) {
-        pic ='<td class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_64') + '"></td>';
+        pic ='<td class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_32') + '"></td>';
         if (data.pilots[i].name === data.captain.name) {
             name = '<td class="win">' + data.pilots[i].name + '</td>';
         }
@@ -78,14 +77,22 @@ function parseTeam(data, seriesID) {
     // numBans is number of times current team banned X ship from being used by other team
     while (j < nBans) {
         numBans = data.banFrequency[j].numBans_str;
-        pic ='<td class="ui small image"><img src="' +  data.banFrequency[j].shipType.icon.href + '"></td>';
+        pic ='<td class="ui small image"><img src="' +  data.banFrequency[j].shipType.icon.href.replace('_64','_32') + '"></td>';
         name = '<td>'+ numBans + ' - ' + data.banFrequency[j].shipType.name +'</td>';
         bans += '<tr>'+ pic + name + endrow;
 
         j++
     }
     // numBans is number of times other team banned X ship from being used by current team
+    //
+    // just appending all bans to a single table, could be huge, wanted another table
+    // but need to figure out @media for mobile and smaller widths first
+    //
     while (k < nBansAgainst) {
+        numBans = data.banFrequencyAgainst[j].numBans_str;
+        pic ='<td class="ui small image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
+        name = '<td>'+ numBans + ' - ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
+        bansAgainst += '<tr>'+ pic + name + endrow;
         k++
     }
 
@@ -97,6 +104,7 @@ function parseTeam(data, seriesID) {
     $('#teamB').append(pilots);
     $('#banH').append(bHeader);
     $('#banB').append(bans);
+    $('#banB').append(bansAgainst);
 
 }
 
