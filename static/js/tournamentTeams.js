@@ -89,7 +89,7 @@ function parseTeam(data, seriesID) {
     // but need to figure out @media for mobile and smaller widths first
     //
     while (k < nBansAgainst) {
-        numBans = data.banFrequencyAgainst[j].numBans_str;
+        numBans = data.banFrequencyAgainst[k].numBans_str;
         pic ='<td class="ui small image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
         name = '<td>'+ numBans + ' - ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
         bansAgainst += '<tr>'+ pic + name + endrow;
