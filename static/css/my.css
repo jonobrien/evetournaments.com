@@ -31,3 +31,9 @@ i.blue.icon, .ui.blue.header {
 .ui.dropdown {
 	padding-left: .4em;
 }
+.ui.table tr td {
+    border-top:none;
+}
+.ui.celled.table tr td, .ui.celled.table tr th {
+    border-left:none;
+}
