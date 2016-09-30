@@ -20,7 +20,7 @@ function queryCrest(crestURL) {
         console.log('[!!] hit preventative rateLimit, wait 1, requery');
         rateLimit = 0;
         $('#rl').empty();
-        $('#rl').append('<div class="ui compact negative message"><i class="warning sign icon"></i> rate limit, please reselect tournament</div>');
+        $('#rl').append('<div class="ui compact negative message"><i class="warning sign icon"></i> rate limit, please reselect item</div>');
     }
 }
 

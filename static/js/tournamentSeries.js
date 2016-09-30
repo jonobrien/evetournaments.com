@@ -16,6 +16,8 @@ function getSeries(url) {
     $('#ft').empty();
     $('#teamH').empty();
     $('#teamB').empty();
+    $('#banH').empty();
+    $('#banB').empty();
     $('#rl').empty();
     if (url === undefined || url === null) {
         console.log("cannot get series, no  url passed");

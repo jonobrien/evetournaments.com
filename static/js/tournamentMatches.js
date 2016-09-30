@@ -43,7 +43,7 @@ function parseMatches(data) {
         $(matchMenu)
         .popup({
             on: 'click',
-            html: '<i class="icon circle thin"></i>'
+            html: '<p>no match data available</p>'
         });
         return;
     }
