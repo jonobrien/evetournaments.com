@@ -45,7 +45,7 @@ function parseTeam(data, seriesID) {
     var nBansAgainst = data.banFrequencyAgainst.length;
     var pilots = '';
     var bans = '';
-    var bansAgainst = '';
+    var bansAgainst = '<tr class="win"><td>opponents</td><td>banned</td></tr>';
     var i = 0;
     var j = 0;
     var k = 0;
