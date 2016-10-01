@@ -57,6 +57,7 @@ function parseSeries(data) {
     var solidDot = '<i class="icon circle"></i>';
     var emptyDot = '<i class="icon circle thin"></i>';
     while (i < lenItems) {
+        // TODO -- all this logic needs a rewrite...
         var rPresent = true;
         var bPresent = true;
         // new series
@@ -68,7 +69,7 @@ function parseSeries(data) {
         // bye series - only 1 team data present
 
         // nobody wins by default (undecided) series
-        winner = 'undecided';
+        winner = redT = blueT = 'undecided';
         matchPopup = '' +  // no series winner
             '<td id="matchMenu'+i+'" class="ui message pop">'+
                 '<i class="icon warning circle"></i>'+
@@ -77,8 +78,12 @@ function parseSeries(data) {
         // blueTeam wins/has bye, no redTeam present
         if ('isBye' in data.items[i].redTeam
                         && data.items[i].redTeam.isBye === true) {
-            blueT = winner = data.items[i].winner.team.teamName;
-            redT = bye;
+            // if series is complete
+            // default is incomplete series
+            if ('isDecided' in data.items[i].winner && data.items[i].winner.isDecided === true) {
+                blueT = winner = data.items[i].winner.team.teamName;
+                redT = bye;
+            }
             matchPopup = ''+  // blue wins
                 '<td id="matchMenu'+i+'" class="ui info message pop">'+
                     emptyDot +
@@ -89,8 +94,10 @@ function parseSeries(data) {
         // redTeam wins/has bye, no blueTeam present
         else if ('isBye' in data.items[i].blueTeam
                             && data.items[i].blueTeam.isBye === true) {
-            redT = winner = data.items[i].winner.team.teamName;
-            blueT = bye;
+            if ('isDecided' in data.item[i].winner && data.items[i].winner.isDecided === true) {
+                redT = winner = data.items[i].winner.team.teamName;
+                blueT = bye;
+            }
             matchPopup = ''+  // red wins
                 '<td id="matchMenu'+i+'" class="ui negative message pop">'+
                    emptyDot +
@@ -101,8 +108,18 @@ function parseSeries(data) {
         // actual matches played:
         // get both teams and series winner
         else {
-            redT = data.items[i].redTeam.team.teamName;
-            blueT = data.items[i].blueTeam.team.teamName;
+            if ('isDecided' in data.items[i].redTeam && data.items[i].redTeam.isDecided === true) {
+                redT = data.items[i].redTeam.team.teamName;
+            }
+            else {
+                rPresent = false;
+            }
+            if ('isDecided' in data.items[i].blueTeam && data.items[i].blueTeam.isDecided === true) {
+                blueT = data.items[i].blueTeam.team.teamName;
+            }
+            else {
+                bPresent = false;
+            }
             if (data.items[i].winner.isDecided === true) {
                 winner = data.items[i].winner.team.teamName;
                 if (winner === redT) {
@@ -122,12 +139,12 @@ function parseSeries(data) {
 
         // RED COLUMN | BLUE COLUMN
         // bold winner
-        if (winner === redT) {
+        if (winner === redT && redT !== blueT) { // red team wins, not undecided or same team
             rbTeamNames = ''+
                 '<td class="ui negative message win">'+winner+'</td>'+
                 '<td class="ui info message">'+blueT+'</td>'
         }
-        else  if (winner === blueT) {
+        else  if (winner === blueT && blueT !== redT) { // blue team wins, not undecided or same team
             rbTeamNames = ''+
                 '<td class="ui negative message">'+redT+'</td>'+
                 '<td class="ui info message win">'+winner+'</td>'
@@ -137,6 +154,7 @@ function parseSeries(data) {
                 '<td class="ui negative message">'+redT+'</td>'+
                 '<td class="ui info message">'+blueT+'</td>'
         }
+
 
         // SERIES WINS COLUMN
         // add matches won, popup showing team information
@@ -184,14 +202,14 @@ function parseSeries(data) {
             $('#rTeam'+i)
             .popup({
                 on: 'click',
-                html: '<p>bye series, no team data available</p>'
+                html: '<p>no team data available</p>'
             });
         }
         if (bPresent === false) {
             $('#bTeam'+i)
             .popup({
                 on: 'click',
-                html: '<p>bye series, no team data available</p>'
+                html: '<p>no team data available</p>'
             });
         }
 
