@@ -50,7 +50,7 @@ function parseTeam(data, seriesID) {
     var j = 0;
     var k = 0;
     tHeader = '' +
-        '<th>' + data.shipsKilled_str + ' ships destroyed worth '+ data.iskKilled_str +  '</th>' +
+        '<th>' + data.shipsKilled_str + ' kills for '+ data.iskKilled_str +  ' ISK</th>' +
         '<th>' + data.name + '</th>'
     bHeader = '' +
         '<th> banned</th>' +
@@ -63,7 +63,7 @@ function parseTeam(data, seriesID) {
     // all other series have data
     // assume red wins
     while (i < nPilots) {
-        pic ='<td class="ui small image"><img src="' +  data.pilots[i].icon.href.replace('_128','_32') + '"></td>';
+        pic ='<td class="ui tiny image"><img src="' +  data.pilots[i].icon.href.replace('_128','_32') + '"></td>';
         if (data.pilots[i].name === data.captain.name) {
             name = '<td class="win">' + data.pilots[i].name + '</td>';
         }
@@ -77,7 +77,7 @@ function parseTeam(data, seriesID) {
     // numBans is number of times current team banned X ship from being used by other team
     while (j < nBans) {
         numBans = data.banFrequency[j].numBans_str;
-        pic ='<td class="ui small image"><img src="' +  data.banFrequency[j].shipType.icon.href.replace('_64','_32') + '"></td>';
+        pic ='<td class="ui tiny image"><img src="' +  data.banFrequency[j].shipType.icon.href.replace('_64','_32') + '"></td>';
         name = '<td>'+ numBans + ' - ' + data.banFrequency[j].shipType.name +'</td>';
         bans += '<tr>'+ pic + name + endrow;
 
@@ -90,7 +90,7 @@ function parseTeam(data, seriesID) {
     //
     while (k < nBansAgainst) {
         numBans = data.banFrequencyAgainst[k].numBans_str;
-        pic ='<td class="ui small image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
+        pic ='<td class="ui tiny image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
         name = '<td>'+ numBans + ' - ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
         bansAgainst += '<tr>'+ pic + name + endrow;
         k++

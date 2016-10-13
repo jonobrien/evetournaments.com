@@ -1,11 +1,12 @@
 /* blue team has shadow */
-.ui.attached.info.message, .ui.info.message {
+.ui.attached.info.message,
+.ui.info.message {
     box-shadow: 0px 0px 0px 0px #A9D5DE inset, 0px 0px 0px 0px transparent;
 }
 .header {
     display:inline;
 }
-/* dropdowns need consistent spacing applied and undecided series have shadows*/
+/* dropdowns need consistent spacing applied and undecided series have shadows */
 .ui.message {
     box-shadow: 0 0 0 0;
 }
@@ -16,10 +17,12 @@
 .pop {
     cursor: pointer;
 }
-i.red.icon, .ui.red.header {
+i.red.icon,
+.ui.red.header {
     color: #9f3a38!important;
 }
-i.blue.icon, .ui.blue.header {
+i.blue.icon,
+.ui.blue.header {
     color: #276f86;
 }
 .win {
@@ -27,15 +30,23 @@ i.blue.icon, .ui.blue.header {
 }
 .ui.compact.table td {
     padding: .4em .4em .4em .4em;
-
 }
 .ui.dropdown {
 	padding-left: .4em;
 }
-.ui.table tr td {
-    border-top:none;
+/* dropdown needs scrolling to avoid being overly long, adds unnecessary border shadow */
+.ui.selection.dropdown, .ui.dropdown .menu {
+    border: none;
 }
-.ui.celled.table tr td, .ui.celled.table tr th {
-    border-left:none;
+/* scrollbar side should not stick out right side */
+.ui.selection.dropdown .menu {
+    width: calc(100% - 1.5px);
+}
+.ui.table tr td {
+    border-top: none;
+}
+.ui.celled.table tr td,
+.ui.celled.table tr th {
+    border-left: none;
 
 }
