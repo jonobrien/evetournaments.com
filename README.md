@@ -12,3 +12,5 @@ $ node server.js
 - /tournaments/teams/`<id>`/
 - /tournaments/`<id>`/series/
 - /tournaments/`<idX>`/series/`<idY>`/matches/
+
+* will migrate to ESI api when CCP migrates Tournament endpoints. Facelift to happen CCPSoon(tm)
