@@ -19,3 +19,5 @@ $ node server.js
 * will migrate to ESI api when CCP migrates Tournament endpoints. Facelift to happen CCPSoon(tm)
 
 - also hosted on [gh-pages](https://jonobrien.io/eve-tournaments/tournaments.html)
+
+## CCP [Developer License](https://developers.eveonline.com/resource/license-agreement)
