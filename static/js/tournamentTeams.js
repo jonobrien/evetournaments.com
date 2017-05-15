@@ -78,7 +78,7 @@ function parseTeam(data, seriesID) {
     while (j < nBans) {
         numBans = data.banFrequency[j].numBans_str;
         pic ='<td class="ui tiny image"><img src="' +  data.banFrequency[j].shipType.icon.href.replace('_64','_32') + '"></td>';
-        name = '<td>'+ numBans + ' - ' + data.banFrequency[j].shipType.name +'</td>';
+        name = '<td>'+ numBans + ' x ' + data.banFrequency[j].shipType.name +'</td>';
         bans += '<tr>'+ pic + name + endrow;
 
         j++
@@ -91,7 +91,7 @@ function parseTeam(data, seriesID) {
     while (k < nBansAgainst) {
         numBans = data.banFrequencyAgainst[k].numBans_str;
         pic ='<td class="ui tiny image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
-        name = '<td>'+ numBans + ' - ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
+        name = '<td>'+ numBans + ' x ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
         bansAgainst += '<tr>'+ pic + name + endrow;
         k++
     }
