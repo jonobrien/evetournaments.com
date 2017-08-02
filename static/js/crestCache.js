@@ -13,7 +13,8 @@ function queryCrest(crestURL) {
     if (rateLimit < max) {
         return $.ajax({
             type: "GET",
-            url: crestURL
+            url: '/query',
+            data: crestURL
         });
     }
     else {

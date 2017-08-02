@@ -7,33 +7,34 @@ const portno = 5000;
 
 
 
-/*
 const https = require('https');
 
-var options = {
-  hostname: 'crest-tq.eveonline.com',
-  port: 443,
-  path: '/',
-  method: 'GET'
-};
+app.get('/query', function(req, res) {
+    //console.log(Object.keys(req.query)[0])
+    var options = {
+      hostname: 'crest-tq.eveonline.com',
+      port: 443,
+      path: Object.keys(req.query)[0],
+      method: 'GET'
+    };
 
-var req = https.request(options, function(res) {
-  console.log('statusCode:', res.statusCode);
-  console.log();
-  console.log('headers:', res.headers);
+    var req = https.request(options, function(response) {
+      console.log('statusCode:', response.statusCode);
+      //console.log('headers:', response.headers);
 
-  res.on('data', function(d) {
-    process.stdout.write(d);
-    console.log();
-  });
-});
-req.end();
+      response.on('data', function(d) {
+        process.stdout.write(d);
+      });
+      res.send(response);
+    });
+    req.end();
 
-req.on('error', function(e) {
-  console.error('failed');
-  console.error(e);
-});
-*/
+    req.on('error', function(e) {
+      console.error('failed');
+      console.error(e);
+    });
+})
+
 
 
 ////////////////////////////////////////////////////////
