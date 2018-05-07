@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jonobrien/eve_js.git"
+    "url": "git+https://github.com/jonobrien/evetournaments.com.git"
   },
   "author": "jonobrien",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/jonobrien/eve_js/issues"
+    "url": "https://github.com/jonobrien/evetournaments.com/issues"
   },
-  "homepage": "https://github.com/jonobrien/eve_js#readme",
+  "homepage": "https://github.com/jonobrien/evetournaments.com#readme",
   "dependencies": {
     "express": "^4.14.0"
   }
