@@ -62,6 +62,9 @@ function parseTeam(data, seriesID) {
     var name = ''; var pic = '';
     // all other series have data
     // assume red wins
+    //
+    // TODO -- image urls use http not https, fix that
+    //
     while (i < nPilots) {
         pic ='<td class="ui tiny image"><img src="' +  data.pilots[i].icon.href.replace('_128','_32') + '"></td>';
         if (data.pilots[i].name === data.captain.name) {
