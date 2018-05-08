@@ -4,6 +4,7 @@ import requests
 from urllib.parse import quote_plus as sanitize_this
 from urllib.parse import unquote
 import json
+import time
 import os
 
 
@@ -16,7 +17,7 @@ import os
 
 
 MAX_TOURNAMENTS = 17  # 1-16
-MAX_TEAMS = 356
+MAX_TEAMS = 357  # 356 + 1 check manually online for it /teams/ 'totalCount_str'
 ROOT = 'https://crest-tq.eveonline.com/'
 TOURNAMENT_ROOT = 'https://crest-tq.eveonline.com/tournaments/'
 
@@ -29,21 +30,21 @@ def save(endpoint, jsonStr, stripStr=ROOT, saveDir=None):
 
     if saveDir:
         sanitized = saveDir + '/' + sanitized
-    print('sanitized: {0}'.format(sanitized))
-    if os.path.exists(os.path.dirname(sanitized)):
-        print('[!!] skipping duplicate: {0}'.format(shortened))
+
+    name = shortened[:-1] + '.json'
+    if os.path.isfile(name):
+        print('[!!] already have: {0}'.format(name))
         return
+    print('sanitized: {0}'.format(sanitized))
+    print('shortened: {0}'.format(shortened))
+    print(os.path.dirname(shortened))
     if not os.path.isdir(shortened):
-        print('making')
-        os.makedirs(os.path.dirname(shortened), exist_ok=True)
-
-    with open(sanitized, 'w') as fd:
+        print('making')  # a whole bunch of redundant folders because yes
+        os.makedirs(os.path.dirname(shortened), exist_ok=True)  # need this just for series/matches in tournaments
+    name = shortened[:-1] + '.json'
+    print('[I] saving: {0}'.format(name))
+    with open(name, 'w') as fd:
         json.dump(jsonStr, fd)
-    print('[I] saved {0}'.format(shortened))
-
-
-def parse_series(jsData):
-    print(jsData)
 
 
 def main():
@@ -54,18 +55,33 @@ def main():
     save(root, rootInfo)
     # for tournaments 1-5 you have to hard-code the <#>/series/
     # as the root endpoint for that tournament returns an error
+    # but get them all anyway
+
+    # teams returns ship and character images
+    # image urls use http not https
 
 
-    # tournaments
-
+    """ /tournaments/idX/ """
     for tourn in range(1, MAX_TOURNAMENTS):
         endpoint = root + str(tourn) + '/'
-        print(endpoint)
         save(endpoint, json.loads(sess.get(endpoint).text), saveDir='tournaments')
-    # teams
+
+    """ /tournaments/teams/idX/ """
+    for team in range(1, MAX_TEAMS): 
+        endpoint = root + 'teams/' + str(team) + '/'
+        save(endpoint, json.loads(sess.get(endpoint).text), saveDir='teams')
+
+    """ /tournaments/idX/series/ """
+    for tourn in range(1, MAX_TOURNAMENTS):
+        endpoint = root + str(tourn) + '/series/'  # series is the number of matches
+        data = json.loads(sess.get(endpoint).text)
+        save(endpoint, data, saveDir='tournaments/{0}/series')
+
+        """ /tournaments/idX/series/idY/matches/ """
+        for series in range(data['totalCount']):  # 0-end (proper range here because ccp is weird)
+            endp = root + str(tourn) + '/series/{0}/matches/'.format(series)
+            save(endp, json.loads(sess.get(endp).text), saveDir='tournaments/{0}/series/{1}/matches/'.format(tourn, series))
     # members
-    # matches
-    # series
     # bans taken from teams
 
 
