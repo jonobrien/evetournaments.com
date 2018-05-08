@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 
 import requests
-from urllib.parse import quote_plus as sanitize_this
-from urllib.parse import unquote
 import json
-import time
 import os
 
 
@@ -12,6 +9,8 @@ import os
  Quick and dirty rip of the public data used by evetournaments.com
  because the CREST API was removed, and this should allow the site
  to maintain the existing features.
+
+ version 2, fixed file structure by properly checking paths with filename
 
 """
 
@@ -25,29 +24,32 @@ TOURNAMENT_ROOT = 'https://crest-tq.eveonline.com/tournaments/'
 
 
 def save(endpoint, jsonStr, stripStr=ROOT, saveDir=None):
+    """
+    generic saving method to check for file existing on fs
+    and dump the json
+    """
     shortened = endpoint.replace(stripStr, '')
-    sanitized = sanitize_this(shortened)
-
-    if saveDir:
-        sanitized = saveDir + '/' + sanitized
-
     name = shortened[:-1] + '.json'
+
     if os.path.isfile(name):
         print('[!!] already have: {0}'.format(name))
         return
-    print('sanitized: {0}'.format(sanitized))
-    print('shortened: {0}'.format(shortened))
-    print(os.path.dirname(shortened))
-    if not os.path.isdir(shortened):
-        print('making')  # a whole bunch of redundant folders because yes
-        os.makedirs(os.path.dirname(shortened), exist_ok=True)  # need this just for series/matches in tournaments
     name = shortened[:-1] + '.json'
-    print('[I] saving: {0}'.format(name))
+
+    # tournament root returns dirname ''
+    if not os.path.exists(os.path.dirname(name)) and os.path.dirname(name):
+        os.makedirs(os.path.dirname(name), exist_ok=True)
+
     with open(name, 'w') as fd:
         json.dump(jsonStr, fd)
+    print('[I] saved: {0}'.format(name))
 
 
 def main():
+    """
+    make session, add user-agent, rip everything utilized in the app
+    to be zipped and used after may 8, 2018
+    """
     sess = requests.Session()
     root = TOURNAMENT_ROOT
     sess.headers.update({'User-Agent': 'evetournaments.com/scrape.py'})
@@ -58,7 +60,11 @@ def main():
     # but get them all anyway
 
     # teams returns ship and character images
+    # teams has members and ban info
     # image urls use http not https
+
+    # series has match winners, so skip /series/idX/
+    # and just get /series/idX/matches/ as noted in my dev doc contribution
 
 
     """ /tournaments/idX/ """
@@ -81,8 +87,8 @@ def main():
         for series in range(data['totalCount']):  # 0-end (proper range here because ccp is weird)
             endp = root + str(tourn) + '/series/{0}/matches/'.format(series)
             save(endp, json.loads(sess.get(endp).text), saveDir='tournaments/{0}/series/{1}/matches/'.format(tourn, series))
-    # members
-    # bans taken from teams
+
+
 
 
 if __name__ == '__main__':
