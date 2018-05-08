@@ -7,7 +7,7 @@ $(document).ready(function() {
     // init tournament information and dropdown to begin parsing
     $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/'>here</a>");
     // hardcode url to avoid querying twice
-    var tRoot = "https://crest-tq.eveonline.com/tournaments/";
+    var tRoot = "static/json/tournaments.json";
     populateTournaments(tRoot);
     $('.ui.dropdown').dropdown();
 
