@@ -30,7 +30,8 @@ function getSeries(url) {
     retrieveAndParse(url, parseSeries);
     // done parsing, TODO -- loading icon with async support
     // update footer with series we query from
-    $('#ft').append("data pulled from <a target='blank' href='"+url+"'>here</a>");
+    $('#ft').append("<br>CCPLZ migrate this to esi for real <a target='blank' href='https://github.com/esi/esi-issues/issues/296'>CCPSoon</a>");
+    $('#ft').append("<br>tell me what I broke migrating to static data <a target='blank' href='https://github.com/jonobrien/evetournaments.com'>over on github</a>");
 }
 
 

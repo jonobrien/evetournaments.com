@@ -5,7 +5,7 @@
 
 $(document).ready(function() {
     // init tournament information and dropdown to begin parsing
-    $('#ft').append("data pulled from <a target='blank' href='https://crest-tq.eveonline.com/tournaments/'>here</a>");
+    $('#ft').append("CCPLZ migrate this to esi for real <a target='blank' href='https://github.com/esi/esi-issues/issues/296'>CCPSoon</a>");
     // hardcode url to avoid querying twice
     var tRoot = "static/json/tournaments.json";
     populateTournaments(tRoot);
