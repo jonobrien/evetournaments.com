@@ -1,8 +1,8 @@
 /*
  * Proof of concept CREST API queried and cached in browser
 */
-var max = 150;
-var rateLimit = 0; // max 150
+var max = 500;
+var rateLimit = 0;
 /*
  * not cached or expired cache, get data
  * every 150 requests we forcefully stop as CREST is rate-limited to 150/sec
@@ -83,16 +83,18 @@ function cache(data, queryStr, cacheOffset) {
 */
 function retrieveAndParse(url, parseFunc, optArgs) {
     var opt = arguments.length;
-    var key = url.replace("https://crest-tq.eveonline.com","");
+    var staticData = url.replace(/\/$/,".json")
+    staticData = staticData.replace("https://crest-tq.eveonline.com/", "static/json/")
+    var key = staticData
     // check if data is already cached
     var cachedData = getCached(key);
     // expired or not cached, get new data, cache, parse
     if (cachedData === null) {
-        cachedData = queryCrest(url);
+        cachedData = queryCrest(key);
         cachedData.success(function(resp) {
             // add in the original url as matches of a bye series
             //  have no way of knowing which series they are associated with, team still doesn't have series <id>
-            resp['query_url'] = url;
+            resp['query_url'] = key;
             cache(resp, key);
             // teams need associated series <id>
             switch (opt) {
@@ -102,7 +104,7 @@ function retrieveAndParse(url, parseFunc, optArgs) {
         }); // every CREST call is successful, ccp returns json error message
         cachedData.error(function(resp, err) {
             console.log('[!!] error in retrieving new data:');
-            console.log('[!!] attempted: ' + url);
+            console.log('[!!] attempted: ' + key);
             console.log(resp);
             console.log(err);
         });

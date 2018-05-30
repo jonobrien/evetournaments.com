@@ -60,10 +60,16 @@ function parseTeam(data, seriesID) {
     var bDot = '<i class="blue icon circle"></i>';
     var winDot = '';
     var name = ''; var pic = '';
+    var picUrl = ''; var shipUrl = '';
     // all other series have data
     // assume red wins
+    //
+    // TODO -- image urls use http not https, fix that
+    //
     while (i < nPilots) {
-        pic ='<td class="ui tiny image"><img src="' +  data.pilots[i].icon.href.replace('_128','_32') + '"></td>';
+        picUrl = data.pilots[i].icon.href.replace('_128','_32').replace("http://", "https://")
+
+        pic ='<td class="ui tiny image"><img src="' +  picUrl + '"></td>';
         if (data.pilots[i].name === data.captain.name) {
             name = '<td class="win">' + data.pilots[i].name + '</td>';
         }
@@ -76,8 +82,10 @@ function parseTeam(data, seriesID) {
     }
     // numBans is number of times current team banned X ship from being used by other team
     while (j < nBans) {
+        shipUrl = data.banFrequency[j].shipType.icon.href.replace('_64','_32').replace("http://", "https://")
         numBans = data.banFrequency[j].numBans_str;
-        pic ='<td class="ui tiny image"><img src="' +  data.banFrequency[j].shipType.icon.href.replace('_64','_32') + '"></td>';
+
+        pic ='<td class="ui tiny image"><img src="' +  shipUrl + '"></td>';
         name = '<td>'+ numBans + ' x ' + data.banFrequency[j].shipType.name +'</td>';
         bans += '<tr>'+ pic + name + endrow;
 
