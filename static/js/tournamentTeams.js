@@ -98,7 +98,7 @@ function parseTeam(data, seriesID) {
     //
     while (k < nBansAgainst) {
         numBans = data.banFrequencyAgainst[k].numBans_str;
-        pic ='<td class="ui tiny image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32') + '"></td>';
+        pic ='<td class="ui tiny image"><img src="' +  data.banFrequencyAgainst[k].shipType.icon.href.replace('_64','_32').replace('http://', 'https://') + '"></td>';
         name = '<td>'+ numBans + ' x ' + data.banFrequencyAgainst[k].shipType.name +'</td>';
         bansAgainst += '<tr>'+ pic + name + endrow;
         k++
