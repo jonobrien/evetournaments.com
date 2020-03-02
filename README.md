@@ -18,7 +18,7 @@ $ node server.js
 - /tournaments/`<idX>`/series/`<idY>`/matches/
 - Eventually contributed to the [docs](https://github.com/ccpgames/eveonline-third-party-documentation/blame/master/docs/crest/eve/eve_tournaments.md)
 
-* will migrate to ESI api when CCP migrates Tournament endpoints. Facelift to happen CCPSoon(tm)
+- will migrate to ESI api when CCP migrates Tournament endpoints. Facelift to happen CCPSoon(tm)
 
 - also hosted on [gh-pages](https://jonobrien.io/evetournaments.com/tournaments.html)
 
